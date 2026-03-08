@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Hospital System - Presentation</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-1: #0ea5e9;
+            /* sky */
+            --accent-2: #6366f1;
+            /* indigo */
+            --accent-3: #14b8a6;
+            /* teal */
+            --accent-4: #f43f5e;
+            /* rose */
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-border: rgba(226, 232, 240, 0.8);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1200px;
+        }
+
+        /* Slide Styles */
+        .slide {
+            position: absolute;
+            width: 85%;
+            height: 85%;
+            max-width: 1200px;
+            max-height: 800px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(40px) scale(0.95);
+            transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .slide.prev {
+            transform: translateY(-40px) scale(0.95);
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Typography */
+        .title-gradient {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .teal-gradient {
+            background: linear-gradient(135deg, var(--accent-3), var(--accent-1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide h1 {
+            font-size: clamp(3rem, 5vw, 5rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .slide h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .slide .lead {
+            font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+            color: var(--text-muted);
+            max-width: 900px;
+            margin: 0 auto 2rem;
+            line-height: 1.5;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            width: 100%;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow-md);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(14, 165, 233, 0.2);
+        }
+
+        .card-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 1rem;
+            background: #f1f5f9;
+            margin-bottom: 1.2rem;
+        }
+
+        .card h3 {
+            font-size: 1.35rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-main);
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .list-items {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .list-items li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .list-items li i {
+            width: 16px;
+            height: 16px;
+            color: var(--accent-1);
+            flex-shrink: 0;
+            margin-top: 0.15rem;
+        }
+
+        /* Tech Pills */
+        .tech-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tech-pill {
+            padding: 0.6rem 1.25rem;
+            border-radius: 2rem;
+            background: white;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow-sm);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+            transition: transform 0.2s;
+        }
+
+        .tech-pill:hover {
+            transform: scale(1.05);
+        }
+
+        /* Architecture Diagram */
+        .arch-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .arch-node {
+            background: white;
+            border: 1px solid var(--card-border);
+            border-radius: 1.25rem;
+            padding: 1.8rem;
+            flex: 1;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+
+        .arch-arrow {
+            color: var(--accent-1);
+        }
+
+        /* Workflow Steps */
+        .workflow {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            max-width: 900px;
+            margin-top: 1.5rem;
+        }
+
+        .workflow-step {
+            background: white;
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            text-align: left;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .status-badge {
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            width: 120px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-verified {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .status-assigned {
+            background: #ccfbf1;
+            color: #0f766e;
+        }
+
+        .status-completed {
+            background: #dcfce3;
+            color: #15803d;
+        }
+
+        /* Database Tables */
+        .db-table {
+            background: white;
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: left;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .db-table h4 {
+            color: var(--accent-2);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .db-table ul {
+            list-style: none;
+            color: var(--text-main);
+            font-size: 0.85rem;
+        }
+
+        .db-table li {
+            margin-bottom: 0.6rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 0.3rem;
+        }
+
+        .db-table li:last-child {
+            border-bottom: none;
+        }
+
+        .db-table li span:last-child {
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: #f1f5f9;
+            color: var(--accent-2);
+            font-weight: 600;
+        }
+
+        .db-type-pk {
+            color: var(--accent-4) !important;
+            background: #ffe4e6 !important;
+        }
+
+        .db-type-fk {
+            color: var(--accent-1) !important;
+            background: #e0f2fe !important;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.75rem 2rem;
+            border-radius: 3rem;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease, transform 0.2s;
+        }
+
+        .control-btn:hover {
+            color: var(--accent-1);
+            transform: scale(1.1);
+        }
+
+        .control-btn:disabled {
+            color: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background: var(--accent-2);
+            transform: scale(1.5);
+        }
+
+        /* Background Effects */
+        .bg-shapes {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 15s infinite ease-in-out alternate;
+        }
+
+        .shape-1 {
+            width: 600px;
+            height: 600px;
+            background: #e0f2fe;
+            top: -200px;
+            left: -100px;
+        }
+
+        .shape-2 {
+            width: 500px;
+            height: 500px;
+            background: #e0e7ff;
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        .shape-3 {
+            width: 400px;
+            height: 400px;
+            background: #ccfbf1;
+            top: 40%;
+            left: 60%;
+            animation-delay: -10s;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+
+            100% {
+                transform: translate(-30px, 20px) scale(0.9);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 2rem 1.5rem;
+                width: 95%;
+                height: 90%;
+            }
+
+            .grid-2,
+            .grid-3,
+            .grid-4 {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .arch-diagram {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .arch-arrow {
+                transform: rotate(90deg);
+                margin: 0;
+            }
+
+            .workflow-step {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.75rem;
+                padding: 1rem;
+            }
+
+            .slide h1 {
+                font-size: 2.5rem;
+            }
+
+            .slide h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="presentation-container" id="presentation">
+
+        <!-- Slide 1: Intro -->
+        <div class="slide active">
+            <div
+                style="background: white; padding: 1.5rem; border-radius: 2rem; box-shadow: var(--shadow-md); margin-bottom: 2rem; display: inline-flex;">
+                <i data-lucide="activity" style="width: 60px; height: 60px; color: var(--accent-1);"></i>
+            </div>
+            <h1>Smart <span class="title-gradient">Hospital</span></h1>
+            <p class="lead" style="color: var(--accent-2); font-weight: 500;">Workflow Management System</p>
+            <p class="lead">A comprehensive, full-stack platform digitizing hospital operations. From patient
+                registration to digital prescriptions, managed through deeply customized, role-based dashboards.</p>
+        </div>
+
+        <!-- Slide 2: The Core Concept -->
+        <div class="slide">
+            <h2 class="title-gradient">The Core Concept</h2>
+            <p class="lead">Replacing fragmented paper trails and disconnected software with a unified,
+                strictly-governed digital pipeline.</p>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-icon" style="color: var(--accent-1); background: #e0f2fe;"><i
+                            data-lucide="split"></i></div>
+                    <h3>Unified Ecosystem</h3>
+                    <p>Patients, Doctors, Staff, and Admins operate on one platform. Each role sees a customized
+                        dashboard, displaying only the data required to perform their specific duties.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon" style="color: var(--accent-3); background: #ccfbf1;"><i
+                            data-lucide="calendar-check"></i></div>
+                    <h3>Managed Pipelines</h3>
+                    <p>Appointments follow a strict state machine: <b>Pending</b> &rarr; <b>Verified</b> &rarr;
+                        <b>Assigned</b> &rarr; <b>Completed</b>, with clear responsibility handoffs at each stage.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon" style="color: var(--accent-4); background: #ffe4e6;"><i
+                            data-lucide="shield-check"></i></div>
+                    <h3>Zero-Trust Security</h3>
+                    <p>Data isolation is enforced at the database level via Row Level Security (RLS). A user physically
+                        cannot query data that does not belong to them.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Four Tailored Experiences -->
+        <div class="slide">
+            <h2>Four <span class="teal-gradient">Roles</span>. Four Workspaces.</h2>
+            <p class="lead">Every login is routed via Next.js Edge Middleware to specific areas.</p>
+
+            <div class="grid-4">
+                <div class="card" style="border-top: 4px solid var(--accent-1)">
+                    <i data-lucide="user"
+                        style="margin-bottom: 1rem; color: var(--accent-1); width: 32px; height: 32px;"></i>
+                    <h3>Patient</h3>
+                    <ul class="list-items">
+                        <li><i data-lucide="check"></i> Self-service registration</li>
+                        <li><i data-lucide="check"></i> Book new appointments</li>
+                        <li><i data-lucide="check"></i> Track appointment status</li>
+                        <li><i data-lucide="check"></i> View digital prescriptions</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-top: 4px solid var(--accent-3)">
+                    <i data-lucide="stethoscope"
+                        style="margin-bottom: 1rem; color: var(--accent-3); width: 32px; height: 32px;"></i>
+                    <h3>Doctor</h3>
+                    <ul class="list-items">
+                        <li><i data-lucide="check"></i> Admin-provisioned accounts</li>
+                        <li><i data-lucide="check"></i> View daily assigned schedule</li>
+                        <li><i data-lucide="check"></i> Mark consultations complete</li>
+                        <li><i data-lucide="check"></i> Issue detailed prescriptions</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-top: 4px solid var(--accent-2)">
+                    <i data-lucide="briefcase-medical"
+                        style="margin-bottom: 1rem; color: var(--accent-2); width: 32px; height: 32px;"></i>
+                    <h3>Staff</h3>
+                    <ul class="list-items">
+                        <li><i data-lucide="check"></i> Pipeline managers</li>
+                        <li><i data-lucide="check"></i> Verify patient requests</li>
+                        <li><i data-lucide="check"></i> Map verified to available doctors</li>
+                        <li><i data-lucide="check"></i> Global appointment overview</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-top: 4px solid var(--accent-4)">
+                    <i data-lucide="settings"
+                        style="margin-bottom: 1rem; color: var(--accent-4); width: 32px; height: 32px;"></i>
+                    <h3>Admin</h3>
+                    <ul class="list-items">
+                        <li><i data-lucide="check"></i> Global stat analytics</li>
+                        <li><i data-lucide="check"></i> Create staff/doctor accounts</li>
+                        <li><i data-lucide="check"></i> Manage hospital departments</li>
+                        <li><i data-lucide="check"></i> Toggle doctor availability</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Tech Stack -->
+        <div class="slide">
+            <h2 class="title-gradient">Modern Tech Stack</h2>
+            <p class="lead">Engineered for type-safety, extreme performance, and immediate UI feedback.</p>
+
+            <div class="tech-list">
+                <div class="tech-pill"><i data-lucide="triangle" style="color: black"></i> Next.js 16 (App Router)</div>
+                <div class="tech-pill"><i data-lucide="file-code-2" style="color: #3178c6"></i> React 19 + TypeScript
+                </div>
+                <div class="tech-pill"><i data-lucide="wind" style="color: #38bdf8"></i> Tailwind CSS v4</div>
+                <div class="tech-pill"><i data-lucide="database" style="color: #10b981"></i> Postgres via Supabase</div>
+                <div class="tech-pill"><i data-lucide="key" style="color: #f59e0b"></i> Supabase Auth (SSR)</div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3 style="color: var(--accent-1); display: flex; align-items: center; gap: 0.5rem;"><i
+                            data-lucide="monitor"></i> Frontend Architecture</h3>
+                    <p>Built with <b>React Server Components</b> for 0kb client-side Javascript data fetching, paired
+                        with Client Components for interactive UI (modals, forms). Fully styled with utility-first
+                        <b>Tailwind CSS</b> for instant dark/light mode toggling.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--accent-2); display: flex; align-items: center; gap: 0.5rem;"><i
+                            data-lucide="server"></i> Backend Infrastructure</h3>
+                    <p>Next.js <b>Route Handlers</b> act as our API layer, securely proxying requests to a managed
+                        <b>PostgreSQL</b> instance. Provides isolated endpoints (<code>/api/patient/*</code> vs
+                        <code>/api/admin/*</code>) to enforce business logic before data touches the database.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: System Architecture -->
+        <div class="slide">
+            <h2>Data <span class="teal-gradient">Architecture</span> Flow</h2>
+            <p class="lead">A secure, multi-layered approach preventing unauthorized access.</p>
+
+            <div class="arch-diagram">
+                <div class="arch-node">
+                    <i data-lucide="monitor-smartphone"
+                        style="margin-bottom: 1rem; color: var(--text-muted); width: 40px; height: 40px;"></i>
+                    <h4 style="font-size: 1.2rem;">Client Layer</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">React UI &
+                        Forms<br>Stores JWT in Cookies</p>
+                </div>
+
+                <i data-lucide="arrow-right" class="arch-arrow" style="width: 32px; height: 32px;"></i>
+
+                <div class="arch-node" style="border-top: 4px solid var(--accent-1)">
+                    <i data-lucide="shield"
+                        style="margin-bottom: 1rem; color: var(--accent-1); width: 40px; height: 40px;"></i>
+                    <h4 style="font-size: 1.2rem;">Edge Middleware</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">Intercepts ALL
+                        requests<br>Validates Role vs Route</p>
+                </div>
+
+                <i data-lucide="arrow-right" class="arch-arrow" style="width: 32px; height: 32px;"></i>
+
+                <div class="arch-node" style="border-top: 4px solid var(--accent-2)">
+                    <i data-lucide="cpu"
+                        style="margin-bottom: 1rem; color: var(--accent-2); width: 40px; height: 40px;"></i>
+                    <h4 style="font-size: 1.2rem;">API Routes</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">Serverless
+                        Functions<br>Auth context injection</p>
+                </div>
+
+                <i data-lucide="arrow-right" class="arch-arrow" style="width: 32px; height: 32px;"></i>
+
+                <div class="arch-node" style="border-top: 4px solid var(--accent-3)">
+                    <i data-lucide="database"
+                        style="margin-bottom: 1rem; color: var(--accent-3); width: 40px; height: 40px;"></i>
+                    <h4 style="font-size: 1.2rem;">Supabase PG</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">Data Persistence<br>Row
+                        Level Security Eval</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Database Toplogy -->
+        <div class="slide">
+            <h2 class="title-gradient">PostgreSQL Topology</h2>
+            <p class="lead">6 highly relational tables maintaining data integrity across the hospital.</p>
+
+            <div class="grid-3">
+                <div class="db-table">
+                    <h4><i data-lucide="users"></i> profiles</h4>
+                    <ul>
+                        <li>id <span class="db-type-pk">UUID PK</span></li>
+                        <li>full_name <span>TEXT</span></li>
+                        <li>role <span>ENUM</span></li>
+                    </ul>
+                    <div style="font-size:0.75rem; margin-top:1rem; color:var(--text-muted);">
+                        <em>* Auto-created on Auth signup via handle_new_user() trigger function.</em>
+                    </div>
+                </div>
+
+                <div class="db-table">
+                    <h4><i data-lucide="calendar"></i> appointments</h4>
+                    <ul>
+                        <li>id <span class="db-type-pk">UUID PK</span></li>
+                        <li>patient_id <span class="db-type-fk">UUID FK</span></li>
+                        <li>doctor_id <span class="db-type-fk">UUID FK (null)</span></li>
+                        <li>dept_id <span class="db-type-fk">UUID FK</span></li>
+                        <li>status <span>TEXT</span></li>
+                        <li>appt_date <span>DATE</span></li>
+                    </ul>
+                </div>
+
+                <div class="db-table">
+                    <h4><i data-lucide="file-text"></i> prescriptions</h4>
+                    <ul>
+                        <li>id <span class="db-type-pk">UUID PK</span></li>
+                        <li>appt_id <span class="db-type-fk">UUID FK</span></li>
+                        <li>doctor_id <span class="db-type-fk">UUID FK</span></li>
+                        <li>diagnosis <span>TEXT</span></li>
+                        <li>meds <span style="background:#fef3c7; color:#d97706;">JSONB</span></li>
+                    </ul>
+                </div>
+
+                <div class="db-table">
+                    <h4><i data-lucide="user-plus"></i> doctors / staff</h4>
+                    <ul>
+                        <li>id <span class="db-type-pk">UUID PK</span></li>
+                        <li>user_id <span class="db-type-fk">UUID FK</span></li>
+                        <li>dept_id <span class="db-type-fk">UUID FK</span></li>
+                        <li>details <span>MIXED TEXT</span></li>
+                    </ul>
+                </div>
+
+                <div class="db-table">
+                    <h4><i data-lucide="user-square"></i> patients</h4>
+                    <ul>
+                        <li>id <span class="db-type-pk">UUID PK</span></li>
+                        <li>user_id <span class="db-type-fk">UUID FK</span></li>
+                        <li>dob <span>DATE</span></li>
+                        <li>blood_group <span>TEXT</span></li>
+                    </ul>
+                </div>
+
+                <div class="db-table">
+                    <h4><i data-lucide="building"></i> departments</h4>
+                    <ul>
+                        <li>id <span class="db-type-pk">UUID PK</span></li>
+                        <li>name <span>TEXT UNIQUE</span></li>
+                        <li>desc <span>TEXT</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Security -->
+        <div class="slide">
+            <h2>Defence <span class="teal-gradient">In Depth</span></h2>
+            <p class="lead">Access control implemented at every layer of the application.</p>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-icon" style="background:#e0f2fe; color:#0ea5e9;"><i data-lucide="lock"
+                            style="width:28px; height:28px;"></i></div>
+                    <h3>Row Level Security (RLS)</h3>
+                    <p>Every SQL query is intercepted by database policies. For example, when a patient fetches
+                        <code>/api/patient/appointments</code>, Postgres implicitly applies
+                        <code>WHERE patient_id = auth.uid()</code>. The Node server cannot accidentally return another
+                        patient's data.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon" style="background:#f3e8ff; color:#a855f7;"><i data-lucide="alert-circle"
+                            style="width:28px; height:28px;"></i></div>
+                    <h3>Anti-Escalation</h3>
+                    <p>Public signups (<code>/register</code>) have <code>role: 'patient'</code> hardcoded. No one can
+                        register as a Doctor or Staff. Those accounts can <b>only</b> be provisioned via an Admin-only
+                        API utilizing a secure server-side <code>SERVICE_ROLE_KEY</code>.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1rem; width: 100%; padding: 1.5rem;">
+                <h3 style="font-size:1.1rem; margin-bottom: 0.5rem; display:flex; align-items:center; gap:0.5rem;"><i
+                        data-lucide="route" style="width:18px;"></i> Next.js Edge Middleware</h3>
+                <p>Before any React component renders, Edge Middleware inspects the browser JWT. If a Doctor types
+                    <code>/dashboard/admin</code> into the URL bar, the request never hits the server—it instantly
+                    redirects to <code>/dashboard/doctor</code>.</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: The Pipeline -->
+        <div class="slide">
+            <h2 class="title-gradient">The Appointment Pipeline</h2>
+            <p class="lead">A linear progression designed to eliminate dropped communications.</p>
+
+            <div class="workflow">
+                <div class="workflow-step">
+                    <div class="status-badge status-pending">1. Pending</div>
+                    <div style="flex:1;">
+                        <h4 style="font-size: 1.1rem; margin-bottom: 0.2rem;">Patient Creation</h4>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">Patient selects an available
+                            department, date, time, and enters their symptoms. The appointment enters the system
+                            awaiting review.</p>
+                    </div>
+                    <i data-lucide="user" style="color:#d97706; width:32px; height:32px;"></i>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="status-badge status-verified">2. Verified</div>
+                    <div style="flex:1;">
+                        <h4 style="font-size: 1.1rem; margin-bottom: 0.2rem;">Staff Triage</h4>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">Staff views the global queue. They
+                            verify the department exists, time is reasonable, and mark it verified.</p>
+                    </div>
+                    <i data-lucide="briefcase-medical" style="color:#0284c7; width:32px; height:32px;"></i>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="status-badge status-assigned">3. Assigned</div>
+                    <div style="flex:1;">
+                        <h4 style="font-size: 1.1rem; margin-bottom: 0.2rem;">Doctor Allocation</h4>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">Staff queries available Doctors within
+                            the requested department and maps the Appointment to a specific Doctor ID.</p>
+                    </div>
+                    <i data-lucide="users" style="color:#0f766e; width:32px; height:32px;"></i>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="status-badge status-completed">4. Completed</div>
+                    <div style="flex:1;">
+                        <h4 style="font-size: 1.1rem; margin-bottom: 0.2rem;">Consultation & Prescription</h4>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">Doctor marks the appointment complete
+                            from their dashboard and generates an immutable JSONB digital prescription for the patient.
+                        </p>
+                    </div>
+                    <i data-lucide="stethoscope" style="color:#15803d; width:32px; height:32px;"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Project Structure -->
+        <div class="slide">
+            <h2>Clean <span class="title-gradient">Project Architecture</span></h2>
+            <p class="lead">Highly organized Next.js App Router structure.</p>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3 style="color: var(--accent-2); margin-bottom: 1rem;"><i data-lucide="folder-tree"></i> Routing
+                        (app/)</h3>
+                    <div
+                        style="background: #f1f5f9; padding: 1.5rem; border-radius: 1rem; font-family: monospace; font-size: 0.9rem; line-height: 2;">
+                        ├── <b>api/</b> <span style="color:#64748b;">// Serverless endpoints</span><br>
+                        │&nbsp;&nbsp;&nbsp;├── admin/create-user/route.ts<br>
+                        │&nbsp;&nbsp;&nbsp;├── doctor/data/route.ts<br>
+                        │&nbsp;&nbsp;&nbsp;└── ...<br>
+                        ├── <b>dashboard/</b><br>
+                        │&nbsp;&nbsp;&nbsp;├── admin/ <span style="color:#64748b;">(Layout + Pages)</span><br>
+                        │&nbsp;&nbsp;&nbsp;├── doctor/<br>
+                        │&nbsp;&nbsp;&nbsp;├── patient/<br>
+                        │&nbsp;&nbsp;&nbsp;└── staff/<br>
+                        ├── <b>login/</b> & <b>register/</b><br>
+                        └── <b>page.tsx</b> <span style="color:#64748b;">// Landing</span>
+                    </div>
+                </div>
+
+                <div class="card" style="display: flex; flex-direction: column;">
+                    <h3 style="color: var(--accent-1); margin-bottom: 1rem;"><i data-lucide="package"></i> Key
+                        Directories</h3>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="font-size:1.1rem; margin-bottom:0.25rem;">components/</h4>
+                        <p>Reusable UI primitives: Sidebar, DashboardLayout, Cards, Modals, StatusBadges, and Skeleton
+                            loaders.</p>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="font-size:1.1rem; margin-bottom:0.25rem;">lib/</h4>
+                        <p>Auth utilities and typed Supabase client initializers (Browser, Server, Admin Service Key).
+                        </p>
+                    </div>
+
+                    <div>
+                        <h4 style="font-size:1.1rem; margin-bottom:0.25rem;">supabase/</h4>
+                        <p>Raw SQL representations of <code>schema.sql</code> and <code>rls.sql</code> for instant
+                            environment replication.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Conclusion -->
+        <div class="slide">
+            <div
+                style="background: #e0f2fe; padding: 1.5rem; border-radius: 2rem; margin-bottom: 2rem; display: inline-flex;">
+                <i data-lucide="rocket" style="width: 60px; height: 60px; color: var(--accent-1);"></i>
+            </div>
+            <h1><span class="title-gradient">Ready to Deploy</span></h1>
+            <p class="lead">A robust, scalable foundation transforming hospital workflows into elegant digital
+                experiences.</p>
+
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+                <div class="tech-pill" style="border-color: var(--accent-1); color: var(--accent-1)"><i
+                        data-lucide="smartphone"></i> Responsive</div>
+                <div class="tech-pill" style="border-color: var(--accent-2); color: var(--accent-2)"><i
+                        data-lucide="lock"></i> RLS Secured</div>
+                <div class="tech-pill" style="border-color: var(--accent-3); color: var(--accent-3)"><i
+                        data-lucide="zap"></i> Performant</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="control-btn" id="prevBtn" onclick="prevSlide()"><i data-lucide="chevron-left"></i></button>
+        <div class="progress-dots" id="dotsContainer">
+            <!-- Dots generated by JS -->
+        </div>
+        <button class="control-btn" id="nextBtn" onclick="nextSlide()"><i data-lucide="chevron-right"></i></button>
+    </div>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Slide logic
+        const slides = document.querySelectorAll('.slide');
+        const dotsContainer = document.getElementById('dotsContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let currentSlide = 0;
+
+        // Create dots
+        slides.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (i === 0) dot.classList.add('active');
+            dot.onclick = () => goToSlide(i);
+            dotsContainer.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.dot');
+
+        function updateState() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active', 'prev');
+                if (i === currentSlide) {
+                    slide.classList.add('active');
+                } else if (i < currentSlide) {
+                    slide.classList.add('prev');
+                }
+            });
+
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === slides.length - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateState();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateState();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateState();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Setup touch swipe
+        let touchstartX = 0;
+        let touchendX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchstartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchendX < touchstartX - 50) nextSlide();
+            if (touchendX > touchstartX + 50) prevSlide();
+        }
+
+        // Initial state
+        updateState();
+    </script>
+</body>
+
+</html>
