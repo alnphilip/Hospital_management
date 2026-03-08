@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users, Stethoscope, CalendarDays, Clock, Building2, FileText } from "lucide-react";
+import { Users, Stethoscope, CalendarDays, Clock, Building2 } from "lucide-react";
 import Card from "@/components/ui/Card";
 import { CardSkeleton } from "@/components/ui/Skeleton";
 import { createClient } from "@/lib/supabaseClient";
@@ -14,7 +14,6 @@ export default function AdminOverview() {
         departments: 0,
         appointments: 0,
         pending: 0,
-        prescriptions: 0,
     });
 
     useEffect(() => { loadData(); }, []);
@@ -23,12 +22,11 @@ export default function AdminOverview() {
         try {
             const supabase = createClient();
 
-            const [pRes, dRes, depRes, aRes, rxRes] = await Promise.all([
+            const [pRes, dRes, depRes, aRes] = await Promise.all([
                 supabase.from("patients").select("*", { count: "exact", head: true }),
                 supabase.from("doctors").select("*", { count: "exact", head: true }),
                 supabase.from("departments").select("*", { count: "exact", head: true }),
                 supabase.from("appointments").select("status"),
-                supabase.from("prescriptions").select("*", { count: "exact", head: true }),
             ]);
 
             const appointments = aRes.data || [];
@@ -39,7 +37,6 @@ export default function AdminOverview() {
                 departments: depRes.count || 0,
                 appointments: appointments.length,
                 pending: appointments.filter((a) => a.status === "pending").length,
-                prescriptions: rxRes.count || 0,
             });
         } catch { }
         setLoading(false);
@@ -50,7 +47,7 @@ export default function AdminOverview() {
             <div className="space-y-6 animate-fade-in">
                 <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Admin Analytics</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[1, 2, 3, 4, 5, 6].map((i) => <CardSkeleton key={i} />)}
+                    {[1, 2, 3, 4, 5].map((i) => <CardSkeleton key={i} />)}
                 </div>
             </div>
         );
@@ -69,7 +66,6 @@ export default function AdminOverview() {
                 <Card label="Departments" value={stats.departments} icon={Building2} color="#8b5cf6" />
                 <Card label="Appointments" value={stats.appointments} icon={CalendarDays} color="#ef4444" />
                 <Card label="Pending Approval" value={stats.pending} icon={Clock} color="#f59e0b" />
-                <Card label="Prescriptions" value={stats.prescriptions} icon={FileText} color="#ec4899" />
             </div>
         </div>
     );
