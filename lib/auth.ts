@@ -13,11 +13,11 @@ export function getRolePath(role: UserRole): string {
     return rolePaths[role] || "/login";
 }
 
+// Public signup — always creates a patient account
 export async function signUp(
     email: string,
     password: string,
-    fullName: string,
-    role: UserRole
+    fullName: string
 ) {
     const supabase = createClient();
     const { data, error } = await supabase.auth.signUp({
@@ -26,7 +26,7 @@ export async function signUp(
         options: {
             data: {
                 full_name: fullName,
-                role,
+                role: "patient", // Hardcoded — only patients can self-register
             },
         },
     });

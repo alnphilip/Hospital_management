@@ -17,21 +17,24 @@ CREATE TABLE public.profiles (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Auto-create profile on signup
+-- Auto-create profile on signup (reads role from user_metadata)
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, full_name, role)
+  INSERT INTO public.profiles (id, full_name, role, phone)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'patient')
+    COALESCE(NEW.raw_user_meta_data->>'role', 'patient'),
+    COALESCE(NEW.raw_user_meta_data->>'phone', '')
   );
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE OR REPLACE TRIGGER on_auth_user_created
+-- Drop existing trigger if present, then re-create
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
@@ -51,12 +54,24 @@ CREATE TABLE public.departments (
 -- ============================================
 CREATE TABLE public.doctors (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL UNIQUE REFERENCES public.profiles(id) ON DELETE CASCADE,
   department_id UUID REFERENCES public.departments(id) ON DELETE SET NULL,
   specialization TEXT DEFAULT '',
   qualification TEXT DEFAULT '',
   experience_years INTEGER DEFAULT 0,
   is_available BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ============================================
+-- STAFF
+-- ============================================
+CREATE TABLE public.staff (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL UNIQUE REFERENCES public.profiles(id) ON DELETE CASCADE,
+  department_id UUID REFERENCES public.departments(id) ON DELETE SET NULL,
+  position TEXT DEFAULT '',
+  shift TEXT DEFAULT 'day' CHECK (shift IN ('day', 'night', 'rotating')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -105,3 +120,24 @@ CREATE TABLE public.prescriptions (
   instructions TEXT DEFAULT '',
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
+-- ============================================
+-- MANUAL ADMIN CREATION (run once)
+-- ============================================
+-- To create an admin account manually:
+--
+-- 1. Go to Supabase Dashboard > Authentication > Users > Add User
+--    Email: admin@hospital.com  Password: YourSecurePassword
+--
+-- 2. Then run this SQL to set the role properly:
+--
+--    UPDATE public.profiles
+--    SET role = 'admin', full_name = 'System Administrator'
+--    WHERE id = '<the-user-uuid>';
+--
+--    UPDATE auth.users
+--    SET raw_user_meta_data = jsonb_set(
+--      COALESCE(raw_user_meta_data, '{}'::jsonb),
+--      '{role}', '"admin"'
+--    )
+--    WHERE id = '<the-user-uuid>';

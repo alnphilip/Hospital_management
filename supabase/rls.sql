@@ -5,6 +5,7 @@
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.departments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.doctors ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.staff ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.patients ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.prescriptions ENABLE ROW LEVEL SECURITY;
@@ -25,6 +26,18 @@ CREATE POLICY "Users can view own profile"
 CREATE POLICY "Staff and Admin can view all profiles"
   ON public.profiles FOR SELECT
   USING (public.get_user_role() IN ('staff', 'admin'));
+
+CREATE POLICY "Doctor can view profiles of assigned patients"
+  ON public.profiles FOR SELECT
+  USING (
+    public.get_user_role() = 'doctor'
+    AND id IN (
+      SELECT p.user_id FROM public.patients p
+      JOIN public.appointments a ON a.patient_id = p.id
+      JOIN public.doctors d ON d.id = a.doctor_id
+      WHERE d.user_id = auth.uid()
+    )
+  );
 
 CREATE POLICY "Users can update own profile"
   ON public.profiles FOR UPDATE
@@ -67,6 +80,25 @@ CREATE POLICY "Doctor can update own record"
 CREATE POLICY "Admin can manage doctors"
   ON public.doctors FOR ALL
   USING (public.get_user_role() = 'admin');
+
+-- ============================================
+-- STAFF POLICIES
+-- ============================================
+CREATE POLICY "Staff can view own record"
+  ON public.staff FOR SELECT
+  USING (user_id = auth.uid());
+
+CREATE POLICY "Admin can view all staff"
+  ON public.staff FOR SELECT
+  USING (public.get_user_role() = 'admin');
+
+CREATE POLICY "Admin can manage staff"
+  ON public.staff FOR ALL
+  USING (public.get_user_role() = 'admin');
+
+CREATE POLICY "Staff can update own record"
+  ON public.staff FOR UPDATE
+  USING (user_id = auth.uid());
 
 -- ============================================
 -- PATIENTS POLICIES
