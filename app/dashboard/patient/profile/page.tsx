@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
 import { Loader2, Save, Pencil, X, User, Phone, Calendar, Heart, Droplets, MapPin, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -26,57 +25,18 @@ export default function PatientProfile() {
     }, []);
 
     async function loadProfile() {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data: prof } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", user.id)
-            .single();
-
-        let { data: patient } = await supabase
-            .from("patients")
-            .select("*")
-            .eq("user_id", user.id)
-            .single();
-
-        // Auto-create patients row if missing
-        if (!patient) {
-            try {
-                const res = await fetch("/api/register-patient", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ userId: user.id }),
-                });
-                if (res.ok) {
-                    const { data: newPatient } = await supabase
-                        .from("patients")
-                        .select("*")
-                        .eq("user_id", user.id)
-                        .single();
-                    patient = newPatient;
-                }
-            } catch {
-                console.error("Failed to auto-create patient record");
+        try {
+            const res = await fetch("/api/patient/profile");
+            const result = await res.json();
+            if (res.ok && result.profile) {
+                setProfile(result.profile);
+                setEditForm(result.profile);
+            } else {
+                toast.error(result.error || "Failed to load profile");
             }
+        } catch {
+            toast.error("Failed to load profile");
         }
-
-        // Use auth user_metadata as fallback for profiles data
-        const meta = user.user_metadata || {};
-        const data = {
-            full_name: prof?.full_name || meta.full_name || "",
-            email: user.email || "",
-            phone: prof?.phone || meta.phone || "",
-            date_of_birth: patient?.date_of_birth || "",
-            gender: patient?.gender || "",
-            blood_group: patient?.blood_group || "",
-            address: patient?.address || "",
-            emergency_contact: patient?.emergency_contact || "",
-        };
-        setProfile(data);
-        setEditForm(data);
         setLoading(false);
     }
 
@@ -93,17 +53,12 @@ export default function PatientProfile() {
     async function handleSave(e: React.FormEvent) {
         e.preventDefault();
         setSaving(true);
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) { setSaving(false); return; }
 
         try {
-            // Use the server API route to save (bypasses RLS)
-            const res = await fetch("/api/register-patient", {
-                method: "POST",
+            const res = await fetch("/api/patient/profile", {
+                method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    userId: user.id,
                     full_name: editForm.full_name,
                     phone: editForm.phone,
                     date_of_birth: editForm.date_of_birth,

@@ -1,5 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabaseAdmin";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+
+async function getAuthUser() {
+    const cookieStore = await cookies();
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll() {
+                    return cookieStore.getAll();
+                },
+            },
+        }
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
+}
 
 export async function POST(request: NextRequest) {
     try {
@@ -19,6 +38,15 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 { error: "Missing userId" },
                 { status: 400 }
+            );
+        }
+
+        // Verify the authenticated user matches the userId being updated
+        const authUser = await getAuthUser();
+        if (!authUser || authUser.id !== userId) {
+            return NextResponse.json(
+                { error: "Unauthorized: You can only update your own profile" },
+                { status: 403 }
             );
         }
 

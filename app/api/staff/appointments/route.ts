@@ -50,8 +50,7 @@ export async function GET() {
         // Get ALL doctors with their names and departments (show availability status)
         const { data: doctors } = await adminClient
             .from("doctors")
-            .select("*, profiles:user_id(full_name), departments:department_id(name)")
-            .eq("is_active", true);
+            .select("*, profiles:user_id(full_name), departments:department_id(name)");
 
         return NextResponse.json({
             appointments: appointments || [],

@@ -34,6 +34,7 @@ interface Doctor {
     specialization: string;
     is_available: boolean;
     is_active: boolean;
+    department_id: string | null;
     profiles?: { full_name: string };
     departments?: { name: string };
     [key: string]: unknown;
@@ -155,9 +156,11 @@ export default function StaffAppointments() {
                                             className="px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-white"
                                         >
                                             <option value="">Select Doctor</option>
-                                            {doctors.map((d) => (
+                                            {doctors
+                                                .filter((d) => d.department_id === apt.departments?.id)
+                                                .map((d) => (
                                                 <option key={d.id} value={d.id}>
-                                                    {d.profiles?.full_name || "Unknown"} — {d.specialization || "General"} {d.departments?.name ? `(${d.departments.name})` : ""} {d.is_available ? "" : "[Busy]"}
+                                                    {d.profiles?.full_name || "Unknown"} — {d.specialization || "General"} {d.is_available ? "" : "[Busy]"}
                                                 </option>
                                             ))}
                                         </select>
