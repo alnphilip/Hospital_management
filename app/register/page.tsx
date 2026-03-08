@@ -17,7 +17,6 @@ import {
     AlertTriangle,
 } from "lucide-react";
 import { signUp, getRolePath } from "@/lib/auth";
-import { createClient } from "@/lib/supabaseClient";
 import toast from "react-hot-toast";
 
 export default function RegisterPage() {
@@ -40,7 +39,7 @@ export default function RegisterPage() {
         setLoading(true);
 
         // Always register as patient
-        const { data, error } = await signUp(email, password, fullName);
+        const { data, error } = await signUp(email, password, fullName, phone);
 
         if (error) {
             toast.error(error.message);
@@ -48,32 +47,34 @@ export default function RegisterPage() {
             return;
         }
 
-        // Create the patients record
+        // Create the patients record via server API (bypasses RLS)
         if (data?.user) {
-            const supabase = createClient();
-
-            if (phone) {
-                await supabase
-                    .from("profiles")
-                    .update({ phone })
-                    .eq("id", data.user.id);
-            }
-
-            const { error: patientError } = await supabase
-                .from("patients")
-                .insert({
-                    user_id: data.user.id,
-                    date_of_birth: dateOfBirth || null,
-                    gender: gender || null,
-                    blood_group: bloodGroup,
-                    address: address,
-                    emergency_contact: emergencyContact,
+            try {
+                const res = await fetch("/api/register-patient", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        userId: data.user.id,
+                        full_name: fullName,
+                        phone,
+                        date_of_birth: dateOfBirth,
+                        gender,
+                        blood_group: bloodGroup,
+                        address,
+                        emergency_contact: emergencyContact,
+                    }),
                 });
 
-            if (patientError) {
-                console.error("Patient record error:", patientError);
+                const result = await res.json();
+                if (!res.ok) {
+                    console.error("Patient record error:", result.error);
+                    toast.error(
+                        "Account created but patient profile failed. You can update it in your profile."
+                    );
+                }
+            } catch {
                 toast.error(
-                    "Account created but patient profile failed. You can update it later."
+                    "Account created but patient profile failed. You can update it in your profile."
                 );
             }
         }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
 import { Plus, Loader2 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -15,13 +14,14 @@ interface Appointment {
     status: string;
     reason: string;
     notes: string;
+    doctors?: { id: string; user_id: string; specialization: string; profiles?: { full_name: string } };
+    departments?: { id: string; name: string };
     [key: string]: unknown;
 }
 
 interface Department {
     id: string;
     name: string;
-    [key: string]: unknown;
 }
 
 export default function PatientAppointments() {
@@ -39,33 +39,37 @@ export default function PatientAppointments() {
         reason: "",
     });
 
-    useEffect(() => {
-        loadData();
-    }, []);
+    useEffect(() => { loadData(); }, []);
 
     async function loadData() {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        try {
+            const res = await fetch("/api/patient/appointments");
+            const result = await res.json();
 
-        const { data: patient } = await supabase
-            .from("patients")
-            .select("id")
-            .eq("user_id", user.id)
-            .single();
-
-        if (patient) {
-            setPatientId(patient.id);
-            const { data: apts } = await supabase
-                .from("appointments")
-                .select("*")
-                .eq("patient_id", patient.id)
-                .order("appointment_date", { ascending: false });
-            setAppointments(apts || []);
+            if (result.patientId) {
+                setPatientId(result.patientId);
+                setAppointments(result.appointments || []);
+                setDepartments(result.departments || []);
+            } else {
+                // Patient record doesn't exist yet — auto-create via register API
+                const { createClient } = await import("@/lib/supabaseClient");
+                const supabase = createClient();
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const createRes = await fetch("/api/register-patient", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ userId: user.id }),
+                    });
+                    const createResult = await createRes.json();
+                    if (createResult.patientId) {
+                        setPatientId(createResult.patientId);
+                    }
+                }
+            }
+        } catch {
+            console.error("Failed to load appointments");
         }
-
-        const { data: depts } = await supabase.from("departments").select("*").order("name");
-        setDepartments(depts || []);
         setLoading(false);
     }
 
@@ -76,24 +80,31 @@ export default function PatientAppointments() {
             return;
         }
         setSubmitting(true);
-        const supabase = createClient();
 
-        const { error } = await supabase.from("appointments").insert({
-            patient_id: patientId,
-            department_id: form.department_id || null,
-            appointment_date: form.appointment_date,
-            appointment_time: form.appointment_time,
-            reason: form.reason,
-            status: "pending",
-        });
+        try {
+            const res = await fetch("/api/patient/appointments", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    patientId,
+                    department_id: form.department_id || null,
+                    appointment_date: form.appointment_date,
+                    appointment_time: form.appointment_time,
+                    reason: form.reason,
+                }),
+            });
 
-        if (error) {
-            toast.error(error.message);
-        } else {
-            toast.success("Appointment booked!");
-            setShowModal(false);
-            setForm({ department_id: "", appointment_date: "", appointment_time: "", reason: "" });
-            loadData();
+            const result = await res.json();
+            if (!res.ok) {
+                toast.error(result.error || "Failed to book appointment.");
+            } else {
+                toast.success("Appointment booked!");
+                setShowModal(false);
+                setForm({ department_id: "", appointment_date: "", appointment_time: "", reason: "" });
+                loadData();
+            }
+        } catch {
+            toast.error("Failed to book appointment.");
         }
         setSubmitting(false);
     }
@@ -139,6 +150,14 @@ export default function PatientAppointments() {
                                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                                     📅 {apt.appointment_date} &nbsp;⏰ {apt.appointment_time}
                                 </p>
+                                {apt.doctors?.profiles?.full_name && (
+                                    <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">
+                                        🩺 Dr. {apt.doctors.profiles.full_name} ({apt.doctors.specialization})
+                                    </p>
+                                )}
+                                {apt.departments?.name && (
+                                    <p className="text-xs text-slate-400 mt-0.5">🏥 {apt.departments.name}</p>
+                                )}
                                 {apt.notes && (
                                     <p className="text-xs text-slate-400 mt-1 truncate">
                                         Notes: {apt.notes}

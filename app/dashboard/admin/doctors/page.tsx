@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
 import { Plus, Loader2, UserPlus } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { TableSkeleton } from "@/components/ui/Skeleton";
@@ -49,18 +48,16 @@ export default function AdminDoctors() {
     }, []);
 
     async function loadData() {
-        const supabase = createClient();
-        const { data: docs } = await supabase
-            .from("doctors")
-            .select("*, profiles(full_name, phone), departments(name)");
-        setDoctors(docs || []);
-
-        const { data: depts } = await supabase
-            .from("departments")
-            .select("id, name")
-            .order("name");
-        setDepartments(depts || []);
-
+        try {
+            const res = await fetch("/api/admin/data?type=doctors");
+            const result = await res.json();
+            if (res.ok) {
+                setDoctors(result.doctors || []);
+                setDepartments(result.departments || []);
+            }
+        } catch {
+            console.error("Failed to load doctors");
+        }
         setLoading(false);
     }
 
@@ -116,15 +113,21 @@ export default function AdminDoctors() {
     }
 
     async function toggleAvailability(id: string, current: boolean) {
-        const supabase = createClient();
-        const { error } = await supabase
-            .from("doctors")
-            .update({ is_available: !current })
-            .eq("id", id);
-        if (error) toast.error(error.message);
-        else {
-            toast.success("Updated!");
-            loadData();
+        try {
+            const res = await fetch("/api/admin/data", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ table: "doctors", id, updates: { is_available: !current } }),
+            });
+            if (res.ok) {
+                toast.success("Updated!");
+                loadData();
+            } else {
+                const result = await res.json();
+                toast.error(result.error || "Failed to update");
+            }
+        } catch {
+            toast.error("Failed to update");
         }
     }
 

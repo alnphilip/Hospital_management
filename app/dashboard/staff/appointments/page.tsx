@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { ShieldCheck, UserPlus } from "lucide-react";
@@ -14,6 +13,18 @@ interface Appointment {
     status: string;
     reason: string;
     doctor_id: string | null;
+    patients?: {
+        id: string;
+        user_id: string;
+        profiles?: { full_name: string };
+    };
+    doctors?: {
+        id: string;
+        user_id: string;
+        specialization: string;
+        profiles?: { full_name: string };
+    };
+    departments?: { id: string; name: string };
     [key: string]: unknown;
 }
 
@@ -22,7 +33,9 @@ interface Doctor {
     user_id: string;
     specialization: string;
     is_available: boolean;
+    is_active: boolean;
     profiles?: { full_name: string };
+    departments?: { name: string };
     [key: string]: unknown;
 }
 
@@ -35,29 +48,59 @@ export default function StaffAppointments() {
     useEffect(() => { loadData(); }, []);
 
     async function loadData() {
-        const supabase = createClient();
-        const { data: apts } = await supabase.from("appointments").select("*").order("created_at", { ascending: false });
-        setAppointments(apts || []);
-
-        const { data: docs } = await supabase.from("doctors").select("*, profiles(full_name)").eq("is_available", true);
-        setDoctors(docs || []);
+        try {
+            const res = await fetch("/api/staff/appointments");
+            const result = await res.json();
+            if (res.ok) {
+                setAppointments(result.appointments || []);
+                setDoctors(result.doctors || []);
+            } else {
+                toast.error(result.error || "Failed to load appointments");
+            }
+        } catch {
+            toast.error("Failed to load appointments");
+        }
         setLoading(false);
     }
 
     async function verifyAppointment(id: string) {
-        const supabase = createClient();
-        const { error } = await supabase.from("appointments").update({ status: "verified" }).eq("id", id);
-        if (error) toast.error(error.message);
-        else { toast.success("Appointment verified!"); loadData(); }
+        try {
+            const res = await fetch("/api/staff/appointments", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ appointmentId: id, action: "verify" }),
+            });
+            const result = await res.json();
+            if (res.ok) {
+                toast.success("Appointment verified!");
+                loadData();
+            } else {
+                toast.error(result.error || "Failed to verify");
+            }
+        } catch {
+            toast.error("Failed to verify appointment");
+        }
     }
 
     async function assignAppointment(id: string) {
         const docId = assignDoctor[id];
         if (!docId) { toast.error("Select a doctor first."); return; }
-        const supabase = createClient();
-        const { error } = await supabase.from("appointments").update({ status: "assigned", doctor_id: docId }).eq("id", id);
-        if (error) toast.error(error.message);
-        else { toast.success("Doctor assigned!"); loadData(); }
+        try {
+            const res = await fetch("/api/staff/appointments", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ appointmentId: id, action: "assign", doctorId: docId }),
+            });
+            const result = await res.json();
+            if (res.ok) {
+                toast.success("Doctor assigned!");
+                loadData();
+            } else {
+                toast.error(result.error || "Failed to assign");
+            }
+        } catch {
+            toast.error("Failed to assign doctor");
+        }
     }
 
     if (loading) {
@@ -85,6 +128,15 @@ export default function StaffAppointments() {
                                 <div>
                                     <p className="text-sm font-semibold text-slate-900 dark:text-white">{apt.reason || "General Consultation"}</p>
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">📅 {apt.appointment_date} &nbsp;⏰ {apt.appointment_time}</p>
+                                    {apt.patients?.profiles?.full_name && (
+                                        <p className="text-xs text-slate-400 mt-0.5">👤 Patient: {apt.patients.profiles.full_name}</p>
+                                    )}
+                                    {apt.departments?.name && (
+                                        <p className="text-xs text-slate-400 mt-0.5">🏥 {apt.departments.name}</p>
+                                    )}
+                                    {apt.doctors?.profiles?.full_name && (
+                                        <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">🩺 Dr. {apt.doctors.profiles.full_name} ({apt.doctors.specialization})</p>
+                                    )}
                                 </div>
                                 <StatusBadge status={apt.status} />
                             </div>
@@ -105,7 +157,7 @@ export default function StaffAppointments() {
                                             <option value="">Select Doctor</option>
                                             {doctors.map((d) => (
                                                 <option key={d.id} value={d.id}>
-                                                    {d.profiles?.full_name || d.specialization || d.id.slice(0, 8)}
+                                                    {d.profiles?.full_name || "Unknown"} — {d.specialization || "General"} {d.departments?.name ? `(${d.departments.name})` : ""} {d.is_available ? "" : "[Busy]"}
                                                 </option>
                                             ))}
                                         </select>

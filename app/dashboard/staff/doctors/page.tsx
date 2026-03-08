@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 
 interface Doctor {
@@ -22,9 +21,15 @@ export default function StaffDoctors() {
     useEffect(() => { loadData(); }, []);
 
     async function loadData() {
-        const supabase = createClient();
-        const { data } = await supabase.from("doctors").select("*, profiles(full_name), departments(name)").order("is_available", { ascending: false });
-        setDoctors(data || []);
+        try {
+            const res = await fetch("/api/staff/appointments");
+            const result = await res.json();
+            if (res.ok) {
+                setDoctors(result.doctors || []);
+            }
+        } catch {
+            console.error("Failed to load doctors");
+        }
         setLoading(false);
     }
 

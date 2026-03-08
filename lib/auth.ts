@@ -17,7 +17,8 @@ export function getRolePath(role: UserRole): string {
 export async function signUp(
     email: string,
     password: string,
-    fullName: string
+    fullName: string,
+    phone?: string
 ) {
     const supabase = createClient();
     const { data, error } = await supabase.auth.signUp({
@@ -27,6 +28,7 @@ export async function signUp(
             data: {
                 full_name: fullName,
                 role: "patient", // Hardcoded — only patients can self-register
+                phone: phone || "",
             },
         },
     });

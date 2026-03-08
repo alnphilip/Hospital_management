@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { CheckCircle } from "lucide-react";
@@ -14,39 +13,45 @@ interface Appointment {
     status: string;
     reason: string;
     notes: string;
+    patients?: { id: string; user_id: string; profiles?: { full_name: string } };
+    departments?: { name: string };
     [key: string]: unknown;
 }
 
 export default function DoctorAppointments() {
     const [loading, setLoading] = useState(true);
     const [appointments, setAppointments] = useState<Appointment[]>([]);
-    const [doctorId, setDoctorId] = useState<string | null>(null);
 
     useEffect(() => { loadData(); }, []);
 
     async function loadData() {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data: doctor } = await supabase.from("doctors").select("id").eq("user_id", user.id).single();
-        if (doctor) {
-            setDoctorId(doctor.id);
-            const { data } = await supabase
-                .from("appointments")
-                .select("*")
-                .eq("doctor_id", doctor.id)
-                .order("appointment_date", { ascending: false });
-            setAppointments(data || []);
-        }
+        try {
+            const res = await fetch("/api/doctor/data?type=appointments");
+            const result = await res.json();
+            if (res.ok) {
+                setAppointments(result.appointments || []);
+            }
+        } catch {}
         setLoading(false);
     }
 
     async function markComplete(id: string) {
-        const supabase = createClient();
-        const { error } = await supabase.from("appointments").update({ status: "completed" }).eq("id", id);
-        if (error) toast.error(error.message);
-        else { toast.success("Marked as completed!"); loadData(); }
+        try {
+            const res = await fetch("/api/doctor/data", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "complete", appointmentId: id }),
+            });
+            const result = await res.json();
+            if (res.ok) {
+                toast.success("Marked as completed!");
+                loadData();
+            } else {
+                toast.error(result.error || "Failed to update");
+            }
+        } catch {
+            toast.error("Failed to update appointment");
+        }
     }
 
     if (loading) {
@@ -73,6 +78,12 @@ export default function DoctorAppointments() {
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-semibold text-slate-900 dark:text-white">{apt.reason || "Consultation"}</p>
                                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">📅 {apt.appointment_date} &nbsp;⏰ {apt.appointment_time}</p>
+                                {apt.patients?.profiles?.full_name && (
+                                    <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">👤 Patient: {apt.patients.profiles.full_name}</p>
+                                )}
+                                {apt.departments?.name && (
+                                    <p className="text-xs text-slate-400 mt-0.5">🏥 {apt.departments.name}</p>
+                                )}
                             </div>
                             <div className="flex items-center gap-3">
                                 <StatusBadge status={apt.status} />

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Users, Stethoscope, CalendarDays, Clock, Building2 } from "lucide-react";
 import Card from "@/components/ui/Card";
 import { CardSkeleton } from "@/components/ui/Skeleton";
-import { createClient } from "@/lib/supabaseClient";
 
 export default function AdminOverview() {
     const [loading, setLoading] = useState(true);
@@ -20,24 +19,18 @@ export default function AdminOverview() {
 
     async function loadData() {
         try {
-            const supabase = createClient();
-
-            const [pRes, dRes, depRes, aRes] = await Promise.all([
-                supabase.from("patients").select("*", { count: "exact", head: true }),
-                supabase.from("doctors").select("*", { count: "exact", head: true }),
-                supabase.from("departments").select("*", { count: "exact", head: true }),
-                supabase.from("appointments").select("status"),
-            ]);
-
-            const appointments = aRes.data || [];
-
-            setStats({
-                patients: pRes.count || 0,
-                doctors: dRes.count || 0,
-                departments: depRes.count || 0,
-                appointments: appointments.length,
-                pending: appointments.filter((a) => a.status === "pending").length,
-            });
+            const res = await fetch("/api/admin/data?type=overview");
+            const result = await res.json();
+            if (res.ok) {
+                const appointments = result.appointments || [];
+                setStats({
+                    patients: result.patientsCount || 0,
+                    doctors: result.doctorsCount || 0,
+                    departments: result.departmentsCount || 0,
+                    appointments: appointments.length,
+                    pending: appointments.filter((a: { status: string }) => a.status === "pending").length,
+                });
+            }
         } catch { }
         setLoading(false);
     }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 
 interface Prescription {
@@ -10,6 +9,8 @@ interface Prescription {
     medications: { name: string; dosage: string; frequency: string }[];
     instructions: string;
     created_at: string;
+    doctors?: { id: string; user_id: string; specialization: string; profiles?: { full_name: string } };
+    appointments?: { appointment_date: string };
     [key: string]: unknown;
 }
 
@@ -17,29 +18,16 @@ export default function PatientPrescriptions() {
     const [loading, setLoading] = useState(true);
     const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
 
-    useEffect(() => {
-        loadData();
-    }, []);
+    useEffect(() => { loadData(); }, []);
 
     async function loadData() {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data: patient } = await supabase
-            .from("patients")
-            .select("id")
-            .eq("user_id", user.id)
-            .single();
-
-        if (patient) {
-            const { data } = await supabase
-                .from("prescriptions")
-                .select("*")
-                .eq("patient_id", patient.id)
-                .order("created_at", { ascending: false });
-            setPrescriptions(data || []);
-        }
+        try {
+            const res = await fetch("/api/patient/data?type=prescriptions");
+            const result = await res.json();
+            if (res.ok) {
+                setPrescriptions(result.prescriptions || []);
+            }
+        } catch {}
         setLoading(false);
     }
 
@@ -76,7 +64,16 @@ export default function PatientPrescriptions() {
                                         {new Date(rx.created_at).toLocaleDateString()}
                                     </p>
                                 </div>
+                                {rx.doctors?.profiles?.full_name && (
+                                    <span className="text-xs text-teal-600 dark:text-teal-400 font-medium">
+                                        🩺 Dr. {rx.doctors.profiles.full_name}
+                                    </span>
+                                )}
                             </div>
+
+                            {rx.doctors?.specialization && (
+                                <p className="text-xs text-slate-400 mb-2">Specialization: {rx.doctors.specialization}</p>
+                            )}
 
                             {rx.medications && rx.medications.length > 0 && (
                                 <div className="space-y-2 mb-3">

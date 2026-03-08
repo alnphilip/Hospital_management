@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { CalendarDays, FileText, Clock, Activity } from "lucide-react";
 import Card from "@/components/ui/Card";
 import { CardSkeleton } from "@/components/ui/Skeleton";
-import { createClient } from "@/lib/supabaseClient";
 import StatusBadge from "@/components/ui/StatusBadge";
 
 interface Appointment {
@@ -13,65 +12,30 @@ interface Appointment {
     appointment_time: string;
     status: string;
     reason: string;
+    doctors?: { id: string; user_id: string; specialization: string; profiles?: { full_name: string } };
+    departments?: { name: string };
     [key: string]: unknown;
 }
 
 export default function PatientOverview() {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
-        totalAppointments: 0,
+        total: 0,
         upcoming: 0,
+        completed: 0,
         prescriptions: 0,
-        pending: 0,
     });
-    const [recentAppointments, setRecentAppointments] = useState<Appointment[]>([]);
+    const [upcomingAppointments, setUpcomingAppointments] = useState<Appointment[]>([]);
 
-    useEffect(() => {
-        loadData();
-    }, []);
+    useEffect(() => { loadData(); }, []);
 
     async function loadData() {
         try {
-            const supabase = createClient();
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
-
-            // Get patient record
-            const { data: patient } = await supabase
-                .from("patients")
-                .select("id")
-                .eq("user_id", user.id)
-                .single();
-
-            if (patient) {
-                // Get appointments
-                const { data: appointments } = await supabase
-                    .from("appointments")
-                    .select("*")
-                    .eq("patient_id", patient.id)
-                    .order("appointment_date", { ascending: false })
-                    .limit(5);
-
-                const allAppointments = appointments || [];
-                const upcoming = allAppointments.filter(
-                    (a) => new Date(a.appointment_date) >= new Date() && a.status !== "cancelled"
-                );
-                const pending = allAppointments.filter((a) => a.status === "pending");
-
-                // Get prescriptions count
-                const { count: rxCount } = await supabase
-                    .from("prescriptions")
-                    .select("*", { count: "exact", head: true })
-                    .eq("patient_id", patient.id);
-
-                setStats({
-                    totalAppointments: allAppointments.length,
-                    upcoming: upcoming.length,
-                    prescriptions: rxCount || 0,
-                    pending: pending.length,
-                });
-
-                setRecentAppointments(allAppointments.slice(0, 5));
+            const res = await fetch("/api/patient/data?type=overview");
+            const result = await res.json();
+            if (res.ok) {
+                setStats(result.stats);
+                setUpcomingAppointments(result.upcomingAppointments || []);
             }
         } catch (err) {
             console.error(err);
@@ -102,26 +66,24 @@ export default function PatientOverview() {
                 </p>
             </div>
 
-            {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card label="Total Appointments" value={stats.totalAppointments} icon={CalendarDays} color="#0ea5e9" />
+                <Card label="Total Appointments" value={stats.total} icon={CalendarDays} color="#0ea5e9" />
                 <Card label="Upcoming" value={stats.upcoming} icon={Clock} color="#14b8a6" />
+                <Card label="Completed" value={stats.completed} icon={Activity} color="#22c55e" />
                 <Card label="Prescriptions" value={stats.prescriptions} icon={FileText} color="#8b5cf6" />
-                <Card label="Pending" value={stats.pending} icon={Activity} color="#f59e0b" />
             </div>
 
-            {/* Recent Appointments */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
                 <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-                    Recent Appointments
+                    Upcoming Appointments
                 </h2>
-                {recentAppointments.length === 0 ? (
+                {upcomingAppointments.length === 0 ? (
                     <p className="text-sm text-slate-400 dark:text-slate-500 py-8 text-center">
-                        No appointments yet. Book your first appointment!
+                        No upcoming appointments. Book your first appointment!
                     </p>
                 ) : (
                     <div className="space-y-3">
-                        {recentAppointments.map((apt) => (
+                        {upcomingAppointments.map((apt) => (
                             <div
                                 key={apt.id}
                                 className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50"
@@ -133,6 +95,14 @@ export default function PatientOverview() {
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                         {apt.appointment_date} at {apt.appointment_time}
                                     </p>
+                                    {apt.doctors?.profiles?.full_name && (
+                                        <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">
+                                            🩺 Dr. {apt.doctors.profiles.full_name} ({apt.doctors.specialization})
+                                        </p>
+                                    )}
+                                    {apt.departments?.name && (
+                                        <p className="text-xs text-slate-400 mt-0.5">🏥 {apt.departments.name}</p>
+                                    )}
                                 </div>
                                 <StatusBadge status={apt.status} />
                             </div>

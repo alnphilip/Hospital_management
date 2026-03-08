@@ -17,7 +17,10 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { data: profile } = await supabase
+        // Use admin client to check role (bypasses RLS)
+        const adminClient = createAdminClient();
+
+        const { data: profile } = await adminClient
             .from("profiles")
             .select("role")
             .eq("id", user.id)
@@ -49,8 +52,6 @@ export async function POST(request: NextRequest) {
         }
 
         // Use the admin client to create the user (bypasses email confirmation)
-        const adminClient = createAdminClient();
-
         const { data: newUser, error: createError } =
             await adminClient.auth.admin.createUser({
                 email,

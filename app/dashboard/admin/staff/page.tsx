@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
 import { Loader2, UserPlus } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { TableSkeleton } from "@/components/ui/Skeleton";
@@ -46,19 +45,16 @@ export default function AdminStaff() {
     }, []);
 
     async function loadData() {
-        const supabase = createClient();
-        const { data } = await supabase
-            .from("staff")
-            .select("*, profiles(full_name, phone), departments(name)")
-            .order("created_at", { ascending: false });
-        setStaff(data || []);
-
-        const { data: depts } = await supabase
-            .from("departments")
-            .select("id, name")
-            .order("name");
-        setDepartments(depts || []);
-
+        try {
+            const res = await fetch("/api/admin/data?type=staff");
+            const result = await res.json();
+            if (res.ok) {
+                setStaff(result.staff || []);
+                setDepartments(result.departments || []);
+            }
+        } catch {
+            console.error("Failed to load staff");
+        }
         setLoading(false);
     }
 

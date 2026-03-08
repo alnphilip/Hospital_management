@@ -5,7 +5,6 @@ import { CalendarDays, Users, FileText, Clock } from "lucide-react";
 import Card from "@/components/ui/Card";
 import { CardSkeleton } from "@/components/ui/Skeleton";
 import StatusBadge from "@/components/ui/StatusBadge";
-import { createClient } from "@/lib/supabaseClient";
 
 interface Appointment {
     id: string;
@@ -13,6 +12,7 @@ interface Appointment {
     appointment_time: string;
     status: string;
     reason: string;
+    patients?: { id: string; user_id: string; profiles?: { full_name: string } };
     [key: string]: unknown;
 }
 
@@ -21,49 +21,17 @@ export default function DoctorOverview() {
     const [stats, setStats] = useState({ total: 0, today: 0, prescriptions: 0, pending: 0 });
     const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
 
-    useEffect(() => {
-        loadData();
-    }, []);
+    useEffect(() => { loadData(); }, []);
 
     async function loadData() {
         try {
-            const supabase = createClient();
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
-
-            const { data: doctor } = await supabase
-                .from("doctors")
-                .select("id")
-                .eq("user_id", user.id)
-                .single();
-
-            if (doctor) {
-                const today = new Date().toISOString().split("T")[0];
-
-                const { data: appointments } = await supabase
-                    .from("appointments")
-                    .select("*")
-                    .eq("doctor_id", doctor.id)
-                    .order("appointment_date", { ascending: true });
-
-                const all = appointments || [];
-                const todayApts = all.filter((a) => a.appointment_date === today);
-                const pending = all.filter((a) => a.status === "assigned");
-
-                const { count: rxCount } = await supabase
-                    .from("prescriptions")
-                    .select("*", { count: "exact", head: true })
-                    .eq("doctor_id", doctor.id);
-
-                setStats({
-                    total: all.length,
-                    today: todayApts.length,
-                    prescriptions: rxCount || 0,
-                    pending: pending.length,
-                });
-                setTodayAppointments(todayApts.slice(0, 5));
+            const res = await fetch("/api/doctor/data?type=overview");
+            const result = await res.json();
+            if (res.ok) {
+                setStats(result.stats);
+                setTodayAppointments(result.todayAppointments || []);
             }
-        } catch { }
+        } catch {}
         setLoading(false);
     }
 
@@ -109,6 +77,9 @@ export default function DoctorOverview() {
                                 <div>
                                     <p className="text-sm font-medium text-slate-900 dark:text-white">{apt.reason || "Consultation"}</p>
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">⏰ {apt.appointment_time}</p>
+                                    {apt.patients?.profiles?.full_name && (
+                                        <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">👤 {apt.patients.profiles.full_name}</p>
+                                    )}
                                 </div>
                                 <StatusBadge status={apt.status} />
                             </div>

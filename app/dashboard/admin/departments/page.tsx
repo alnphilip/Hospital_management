@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
 import {
     Plus,
     Trash2,
@@ -97,12 +96,15 @@ export default function AdminDepartments() {
     }, []);
 
     async function loadData() {
-        const supabase = createClient();
-        const { data } = await supabase
-            .from("departments")
-            .select("*")
-            .order("name");
-        setDepartments(data || []);
+        try {
+            const res = await fetch("/api/admin/data?type=departments");
+            const result = await res.json();
+            if (res.ok) {
+                setDepartments(result.departments || []);
+            }
+        } catch {
+            console.error("Failed to load departments");
+        }
         setLoading(false);
     }
 
@@ -117,23 +119,16 @@ export default function AdminDepartments() {
         setDeptDoctors([]);
         setDeptStaff([]);
 
-        const supabase = createClient();
-
-        const [doctorRes, staffRes] = await Promise.all([
-            supabase
-                .from("doctors")
-                .select("id, specialization, qualification, experience_years, is_available, profiles(full_name, phone)")
-                .eq("department_id", deptId)
-                .order("created_at"),
-            supabase
-                .from("staff")
-                .select("id, position, shift, profiles(full_name, phone)")
-                .eq("department_id", deptId)
-                .order("created_at"),
-        ]);
-
-        setDeptDoctors((doctorRes.data as unknown as DoctorInfo[]) || []);
-        setDeptStaff((staffRes.data as unknown as StaffInfo[]) || []);
+        try {
+            const res = await fetch(`/api/admin/data?type=dept-members&deptId=${deptId}`);
+            const result = await res.json();
+            if (res.ok) {
+                setDeptDoctors(result.doctors || []);
+                setDeptStaff(result.staff || []);
+            }
+        } catch {
+            console.error("Failed to load department members");
+        }
         setLoadingMembers(false);
     }
 
@@ -177,7 +172,6 @@ export default function AdminDepartments() {
         }
 
         setSubmitting(true);
-        const supabase = createClient();
 
         const toInsert = PREDEFINED_DEPARTMENTS.filter((d) =>
             selected.has(d.name)
@@ -186,18 +180,27 @@ export default function AdminDepartments() {
             description: d.description,
         }));
 
-        const { error } = await supabase.from("departments").insert(toInsert);
+        try {
+            const res = await fetch("/api/admin/data", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ table: "departments", records: toInsert }),
+            });
 
-        if (error) {
-            toast.error(error.message);
-        } else {
-            toast.success(
-                `${toInsert.length} department${toInsert.length > 1 ? "s" : ""} added!`
-            );
-            setShowModal(false);
-            setSelected(new Set());
-            setSearchQuery("");
-            loadData();
+            if (!res.ok) {
+                const result = await res.json();
+                toast.error(result.error || "Failed to add departments");
+            } else {
+                toast.success(
+                    `${toInsert.length} department${toInsert.length > 1 ? "s" : ""} added!`
+                );
+                setShowModal(false);
+                setSelected(new Set());
+                setSearchQuery("");
+                loadData();
+            }
+        } catch {
+            toast.error("Failed to add departments");
         }
         setSubmitting(false);
     }
@@ -205,16 +208,20 @@ export default function AdminDepartments() {
     async function handleDelete(id: string, e: React.MouseEvent) {
         e.stopPropagation();
         if (!confirm("Delete this department? Doctors and staff in this department will be unassigned.")) return;
-        const supabase = createClient();
-        const { error } = await supabase
-            .from("departments")
-            .delete()
-            .eq("id", id);
-        if (error) toast.error(error.message);
-        else {
-            toast.success("Deleted!");
-            if (expandedDeptId === id) setExpandedDeptId(null);
-            loadData();
+        try {
+            const res = await fetch(`/api/admin/data?table=departments&id=${id}`, {
+                method: "DELETE",
+            });
+            if (res.ok) {
+                toast.success("Deleted!");
+                if (expandedDeptId === id) setExpandedDeptId(null);
+                loadData();
+            } else {
+                const result = await res.json();
+                toast.error(result.error || "Failed to delete");
+            }
+        } catch {
+            toast.error("Failed to delete department");
         }
     }
 
