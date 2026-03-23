@@ -20,7 +20,7 @@ async function getAuthUser() {
     return user;
 }
 
-// GET — list all appointments (for staff)
+// GET — list appointments (filtered by staff's department)
 export async function GET() {
     try {
         const user = await getAuthUser();
@@ -41,20 +41,49 @@ export async function GET() {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        // Get all appointments with patient info, doctor info, department info
-        const { data: appointments } = await adminClient
+        // Get staff's department (null = general staff → sees all)
+        let staffDepartmentId: string | null = null;
+
+        if (profile.role === "staff") {
+            const { data: staffRecord } = await adminClient
+                .from("staff")
+                .select("department_id")
+                .eq("user_id", user.id)
+                .single();
+
+            staffDepartmentId = staffRecord?.department_id || null;
+        }
+        // Admin always sees everything (staffDepartmentId stays null)
+
+        // Build appointments query
+        let appointmentsQuery = adminClient
             .from("appointments")
-            .select("*, patients(id, user_id, profiles:user_id(full_name)), doctors:doctor_id(id, user_id, specialization, profiles:user_id(full_name)), departments:department_id(id, name)")
+            .select("*, patients(id, user_id, op_number, profiles:user_id(full_name)), doctors:doctor_id(id, user_id, specialization, profiles:user_id(full_name)), departments:department_id(id, name)")
             .order("created_at", { ascending: false });
 
-        // Get ALL doctors with their names and departments (show availability status)
-        const { data: doctors } = await adminClient
+        // Filter by department if staff has a specific department
+        if (staffDepartmentId) {
+            appointmentsQuery = appointmentsQuery.eq("department_id", staffDepartmentId);
+        }
+
+        const { data: appointments } = await appointmentsQuery;
+
+        // Build doctors query
+        let doctorsQuery = adminClient
             .from("doctors")
             .select("*, profiles:user_id(full_name), departments:department_id(name)");
+
+        // Filter doctors by department too
+        if (staffDepartmentId) {
+            doctorsQuery = doctorsQuery.eq("department_id", staffDepartmentId);
+        }
+
+        const { data: doctors } = await doctorsQuery;
 
         return NextResponse.json({
             appointments: appointments || [],
             doctors: doctors || [],
+            staffDepartmentId,
         });
     } catch (err) {
         console.error("Staff appointments GET error:", err);
@@ -83,8 +112,36 @@ export async function PATCH(request: NextRequest) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
+        // Check staff's department for authorization
+        if (profile.role === "staff") {
+            const { data: staffRecord } = await adminClient
+                .from("staff")
+                .select("department_id")
+                .eq("user_id", user.id)
+                .single();
+
+            const staffDeptId = staffRecord?.department_id || null;
+
+            // If staff has a department, verify the appointment belongs to their department
+            if (staffDeptId) {
+                const body = await request.clone().json();
+                const { data: apt } = await adminClient
+                    .from("appointments")
+                    .select("department_id")
+                    .eq("id", body.appointmentId)
+                    .single();
+
+                if (apt && apt.department_id !== staffDeptId) {
+                    return NextResponse.json(
+                        { error: "You can only manage appointments in your department" },
+                        { status: 403 }
+                    );
+                }
+            }
+        }
+
         const body = await request.json();
-        const { appointmentId, action, doctorId } = body;
+        const { appointmentId, action, doctorId, appointment_time } = body;
 
         if (!appointmentId || !action) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -94,8 +151,13 @@ export async function PATCH(request: NextRequest) {
 
         if (action === "verify") {
             updateData = { status: "verified" };
+            if (appointment_time) {
+                updateData.appointment_time = appointment_time;
+            }
         } else if (action === "assign" && doctorId) {
             updateData = { status: "assigned", doctor_id: doctorId };
+        } else if (action === "verify_assign" && doctorId && appointment_time) {
+            updateData = { status: "assigned", doctor_id: doctorId, appointment_time };
         } else {
             return NextResponse.json({ error: "Invalid action" }, { status: 400 });
         }

@@ -7,7 +7,6 @@ import {
     CalendarDays,
     FileText,
     UserCircle,
-    Building2,
 } from "lucide-react";
 import type { SidebarLink } from "@/components/Sidebar";
 import { createClient } from "@/lib/supabaseClient";
@@ -16,7 +15,6 @@ const links: SidebarLink[] = [
     { href: "/dashboard/patient", label: "Overview", icon: LayoutDashboard },
     { href: "/dashboard/patient/appointments", label: "Appointments", icon: CalendarDays },
     { href: "/dashboard/patient/prescriptions", label: "Prescriptions", icon: FileText },
-    { href: "/dashboard/patient/departments", label: "Departments", icon: Building2 },
     { href: "/dashboard/patient/profile", label: "Profile", icon: UserCircle },
 ];
 

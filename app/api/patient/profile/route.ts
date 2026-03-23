@@ -44,7 +44,7 @@ export async function GET() {
         // Fetch patient-specific data
         let { data: patient } = await adminClient
             .from("patients")
-            .select("*")
+            .select("date_of_birth, gender, blood_group, address, emergency_contact, op_number")
             .eq("user_id", user.id)
             .single();
 
@@ -68,6 +68,7 @@ export async function GET() {
                 blood_group: patient?.blood_group || "",
                 address: patient?.address || "",
                 emergency_contact: patient?.emergency_contact || "",
+                op_number: patient?.op_number || "",
             },
         });
     } catch (err) {

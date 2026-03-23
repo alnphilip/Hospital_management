@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
-import { LayoutDashboard, CalendarDays, Users } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import type { SidebarLink } from "@/components/Sidebar";
 import { createClient } from "@/lib/supabaseClient";
 
 const links: SidebarLink[] = [
-    { href: "/dashboard/doctor", label: "Overview", icon: LayoutDashboard },
-    { href: "/dashboard/doctor/appointments", label: "Appointments", icon: CalendarDays },
-    { href: "/dashboard/doctor/patients", label: "My Patients", icon: Users },
+    { href: "/dashboard/doctor", label: "Appointments", icon: CalendarDays },
 ];
 
 export default function DoctorLayout({ children }: { children: React.ReactNode }) {

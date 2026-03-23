@@ -13,7 +13,6 @@ interface Appointment {
     status: string;
     reason: string;
     doctors?: { id: string; user_id: string; specialization: string; profiles?: { full_name: string } };
-    departments?: { name: string };
     [key: string]: unknown;
 }
 
@@ -93,16 +92,19 @@ export default function PatientOverview() {
                                         {apt.reason || "General Consultation"}
                                     </p>
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                                        {apt.appointment_date} at {apt.appointment_time}
+                                        {apt.appointment_date}
+                                        {apt.status !== "pending" && apt.appointment_time && apt.appointment_time !== "00:00:00" ? (
+                                            <> at {apt.appointment_time}</>
+                                        ) : (
+                                            <span className="ml-1 text-amber-500 dark:text-amber-400">— Awaiting time slot</span>
+                                        )}
                                     </p>
                                     {apt.doctors?.profiles?.full_name && (
                                         <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">
                                             🩺 Dr. {apt.doctors.profiles.full_name} ({apt.doctors.specialization})
                                         </p>
                                     )}
-                                    {apt.departments?.name && (
-                                        <p className="text-xs text-slate-400 mt-0.5">🏥 {apt.departments.name}</p>
-                                    )}
+
                                 </div>
                                 <StatusBadge status={apt.status} />
                             </div>

@@ -59,6 +59,7 @@ CREATE TABLE public.doctors (
   specialization TEXT DEFAULT '',
   qualification TEXT DEFAULT '',
   experience_years INTEGER DEFAULT 0,
+  consultation_time TEXT DEFAULT '',
   is_available BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT now()
 );

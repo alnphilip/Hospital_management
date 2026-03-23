@@ -17,6 +17,7 @@ export default function PatientProfile() {
         blood_group: "",
         address: "",
         emergency_contact: "",
+        op_number: "",
     });
     const [editForm, setEditForm] = useState({ ...profile });
 
@@ -97,6 +98,7 @@ export default function PatientProfile() {
     // Read-only view
     if (!editing) {
         const fields = [
+            { label: "OP Number", value: profile.op_number, icon: User },
             { label: "Full Name", value: profile.full_name, icon: User },
             { label: "Email", value: profile.email, icon: User },
             { label: "Phone", value: profile.phone, icon: Phone },
@@ -127,7 +129,8 @@ export default function PatientProfile() {
                         </div>
                         <div>
                             <h2 className="text-lg font-bold text-slate-900 dark:text-white">{profile.full_name || "—"}</h2>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">{profile.email}</p>
+                            <p className="text-sm font-semibold text-teal-600 dark:text-teal-400 mt-0.5">{profile.op_number || "OP-Pending"}</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{profile.email}</p>
                         </div>
                     </div>
 

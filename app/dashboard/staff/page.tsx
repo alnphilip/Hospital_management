@@ -43,7 +43,7 @@ export default function StaffOverview() {
                 const active = all.filter((a) => a.status !== "completed" && a.status !== "cancelled");
                 setRecentAppointments(active.slice(0, 8));
             }
-        } catch {}
+        } catch { }
         setLoading(false);
     }
 
@@ -88,7 +88,7 @@ export default function StaffOverview() {
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-slate-900 dark:text-white">{apt.reason || "Consultation"}</p>
                                     <div className="flex flex-wrap gap-x-3 text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                        <span>📅 {apt.appointment_date} ⏰ {apt.appointment_time}</span>
+                                        <span>📅 {apt.appointment_date} {apt.appointment_time && apt.appointment_time !== "00:00:00" ? `⏰ ${apt.appointment_time}` : "⏳ No time set"}</span>
                                         {apt.patients?.profiles?.full_name && (
                                             <span>👤 {apt.patients.profiles.full_name}</span>
                                         )}

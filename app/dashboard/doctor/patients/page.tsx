@@ -30,6 +30,7 @@ interface Patient {
     date_of_birth: string | null;
     gender: string | null;
     blood_group: string;
+    op_number: string;
     profiles?: { full_name: string };
     appointment_count?: number;
     last_appointment?: string | null;
@@ -64,7 +65,7 @@ export default function DoctorPatients() {
             if (res.ok) {
                 setPatients(result.patients || []);
             }
-        } catch {}
+        } catch { }
         setLoading(false);
     }
 
@@ -177,7 +178,10 @@ export default function DoctorPatients() {
                                             <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
                                                 {patient.profiles?.full_name || "Unknown"}
                                             </p>
-                                            <div className="flex flex-wrap items-center gap-x-3 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                            <p className="text-xs font-medium text-teal-600 dark:text-teal-400 mt-0.5">
+                                                {patient.op_number || "OP-Pending"}
+                                            </p>
+                                            <div className="flex flex-wrap items-center gap-x-3 text-xs text-slate-500 dark:text-slate-400 mt-1">
                                                 <span className="capitalize">{patient.gender || "—"}</span>
                                                 {patient.blood_group && <span>🩸 {patient.blood_group}</span>}
                                                 {patient.date_of_birth && (

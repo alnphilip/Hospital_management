@@ -91,6 +91,7 @@ export async function POST(request: NextRequest) {
                     specialization: extra?.specialization || "",
                     qualification: extra?.qualification || "",
                     experience_years: extra?.experience_years || 0,
+                    consultation_time: extra?.consultation_time || "",
                 });
 
             if (doctorError) {

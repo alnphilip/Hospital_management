@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users, Stethoscope, CalendarDays, Clock, Building2 } from "lucide-react";
+import { Users, Stethoscope, CalendarDays, Clock, Building2, UserCog } from "lucide-react";
 import Card from "@/components/ui/Card";
 import { CardSkeleton } from "@/components/ui/Skeleton";
 
@@ -10,6 +10,7 @@ export default function AdminOverview() {
     const [stats, setStats] = useState({
         patients: 0,
         doctors: 0,
+        staff: 0,
         departments: 0,
         appointments: 0,
         pending: 0,
@@ -26,6 +27,7 @@ export default function AdminOverview() {
                 setStats({
                     patients: result.patientsCount || 0,
                     doctors: result.doctorsCount || 0,
+                    staff: result.staffCount || 0,
                     departments: result.departmentsCount || 0,
                     appointments: appointments.length,
                     pending: appointments.filter((a: { status: string }) => a.status === "pending").length,
@@ -40,7 +42,7 @@ export default function AdminOverview() {
             <div className="space-y-6 animate-fade-in">
                 <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Admin Analytics</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[1, 2, 3, 4, 5].map((i) => <CardSkeleton key={i} />)}
+                    {[1, 2, 3, 4, 5, 6].map((i) => <CardSkeleton key={i} />)}
                 </div>
             </div>
         );
@@ -56,6 +58,7 @@ export default function AdminOverview() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Card label="Total Patients" value={stats.patients} icon={Users} color="#0ea5e9" />
                 <Card label="Doctors" value={stats.doctors} icon={Stethoscope} color="#14b8a6" />
+                <Card label="Staff" value={stats.staff} icon={UserCog} color="#ec4899" />
                 <Card label="Departments" value={stats.departments} icon={Building2} color="#8b5cf6" />
                 <Card label="Appointments" value={stats.appointments} icon={CalendarDays} color="#ef4444" />
                 <Card label="Pending Approval" value={stats.pending} icon={Clock} color="#f59e0b" />

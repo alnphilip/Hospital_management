@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabaseClient";
 
 const links: SidebarLink[] = [
     { href: "/dashboard/admin", label: "Analytics", icon: LayoutDashboard },
+    { href: "/dashboard/admin/patients", label: "Patients", icon: Users },
     { href: "/dashboard/admin/departments", label: "Departments", icon: Building2 },
     { href: "/dashboard/admin/doctors", label: "Doctors", icon: Stethoscope },
     { href: "/dashboard/admin/staff", label: "Staff", icon: Users },

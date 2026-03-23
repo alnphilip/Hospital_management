@@ -55,9 +55,16 @@ export async function GET() {
             .select("id, name")
             .order("name");
 
+        // Get doctors with consultation_time for doctor preference
+        const { data: doctors } = await adminClient
+            .from("doctors")
+            .select("id, user_id, specialization, consultation_time, department_id, is_available, profiles:user_id(full_name)")
+            .eq("is_available", true);
+
         return NextResponse.json({
             appointments: appointments || [],
             departments: departments || [],
+            doctors: doctors || [],
             patientId: patient.id,
         });
     } catch (err) {
@@ -75,7 +82,7 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { patientId, department_id, appointment_date, appointment_time, reason } = body;
+        const { patientId, department_id, appointment_date, appointment_time, reason, doctor_id } = body;
 
         if (!patientId || !appointment_date || !appointment_time) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -100,6 +107,7 @@ export async function POST(request: NextRequest) {
             .insert({
                 patient_id: patientId,
                 department_id: department_id || null,
+                doctor_id: doctor_id || null,
                 appointment_date,
                 appointment_time,
                 reason: reason || "",

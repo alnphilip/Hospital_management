@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
 
             const { data: patientData } = await adminClient
                 .from("patients")
-                .select("*, profiles:user_id(full_name)")
+                .select("*, op_number, profiles:user_id(full_name)")
                 .in("id", patientIds);
 
             // Get all prescriptions this doctor wrote for these patients

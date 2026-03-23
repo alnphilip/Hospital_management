@@ -12,6 +12,7 @@ interface Doctor {
     specialization: string;
     qualification: string;
     experience_years: number;
+    consultation_time: string;
     is_available: boolean;
     profiles?: { full_name: string; phone: string };
     departments?: { name: string };
@@ -41,6 +42,7 @@ export default function AdminDoctors() {
         specialization: "",
         qualification: "",
         experience_years: 0,
+        consultation_time: "",
     });
 
     useEffect(() => {
@@ -80,6 +82,7 @@ export default function AdminDoctors() {
                         specialization: form.specialization,
                         qualification: form.qualification,
                         experience_years: form.experience_years,
+                        consultation_time: form.consultation_time,
                     },
                 }),
             });
@@ -102,6 +105,7 @@ export default function AdminDoctors() {
                     specialization: "",
                     qualification: "",
                     experience_years: 0,
+                    consultation_time: "",
                 });
                 loadData();
             }
@@ -178,11 +182,10 @@ export default function AdminDoctors() {
                                 onClick={() =>
                                     toggleAvailability(doc.id, doc.is_available)
                                 }
-                                className={`px-2 py-0.5 rounded-full text-xs font-semibold transition ${
-                                    doc.is_available
+                                className={`px-2 py-0.5 rounded-full text-xs font-semibold transition ${doc.is_available
                                         ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400"
                                         : "bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400"
-                                }`}
+                                    }`}
                             >
                                 {doc.is_available ? "Available" : "Unavailable"}
                             </button>
@@ -191,6 +194,7 @@ export default function AdminDoctors() {
                             <p>🏥 {doc.departments?.name || "No dept"}</p>
                             <p>🎓 {doc.qualification || "N/A"}</p>
                             <p>📅 {doc.experience_years}yr exp</p>
+                            {doc.consultation_time && <p>🕐 {doc.consultation_time}</p>}
                             <p>📞 {doc.profiles?.phone || "N/A"}</p>
                         </div>
                     </div>
@@ -353,23 +357,42 @@ export default function AdminDoctors() {
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                            Experience (years)
-                        </label>
-                        <input
-                            type="number"
-                            value={form.experience_years}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    experience_years:
-                                        parseInt(e.target.value) || 0,
-                                })
-                            }
-                            min={0}
-                            className={inputClasses}
-                        />
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                Experience (years)
+                            </label>
+                            <input
+                                type="number"
+                                value={form.experience_years}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        experience_years:
+                                            parseInt(e.target.value) || 0,
+                                    })
+                                }
+                                min={0}
+                                className={inputClasses}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                Consultation Time
+                            </label>
+                            <input
+                                type="text"
+                                value={form.consultation_time}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        consultation_time: e.target.value,
+                                    })
+                                }
+                                placeholder="e.g. 10:00 AM - 1:00 PM"
+                                className={inputClasses}
+                            />
+                        </div>
                     </div>
 
                     <button

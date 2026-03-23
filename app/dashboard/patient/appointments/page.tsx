@@ -24,18 +24,29 @@ interface Department {
     name: string;
 }
 
+interface Doctor {
+    id: string;
+    user_id: string;
+    specialization: string;
+    consultation_time: string;
+    department_id: string | null;
+    is_available: boolean;
+    profiles?: { full_name: string };
+}
+
 export default function PatientAppointments() {
     const [loading, setLoading] = useState(true);
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [departments, setDepartments] = useState<Department[]>([]);
+    const [doctors, setDoctors] = useState<Doctor[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [patientId, setPatientId] = useState<string | null>(null);
 
     const [form, setForm] = useState({
         department_id: "",
+        doctor_id: "",
         appointment_date: "",
-        appointment_time: "",
         reason: "",
     });
 
@@ -50,6 +61,7 @@ export default function PatientAppointments() {
                 setPatientId(result.patientId);
                 setAppointments(result.appointments || []);
                 setDepartments(result.departments || []);
+                setDoctors(result.doctors || []);
             } else {
                 // Patient record doesn't exist yet — auto-create via register API
                 const { createClient } = await import("@/lib/supabaseClient");
@@ -73,6 +85,11 @@ export default function PatientAppointments() {
         setLoading(false);
     }
 
+    // Filter doctors by selected department
+    const filteredDoctors = form.department_id
+        ? doctors.filter((d) => d.department_id === form.department_id)
+        : doctors;
+
     async function handleCreate(e: React.FormEvent) {
         e.preventDefault();
         if (!patientId) {
@@ -88,8 +105,9 @@ export default function PatientAppointments() {
                 body: JSON.stringify({
                     patientId,
                     department_id: form.department_id || null,
+                    doctor_id: form.doctor_id || null,
                     appointment_date: form.appointment_date,
-                    appointment_time: form.appointment_time,
+                    appointment_time: "00:00",
                     reason: form.reason,
                 }),
             });
@@ -100,7 +118,7 @@ export default function PatientAppointments() {
             } else {
                 toast.success("Appointment booked!");
                 setShowModal(false);
-                setForm({ department_id: "", appointment_date: "", appointment_time: "", reason: "" });
+                setForm({ department_id: "", doctor_id: "", appointment_date: "", reason: "" });
                 loadData();
             }
         } catch {
@@ -148,7 +166,12 @@ export default function PatientAppointments() {
                                     {apt.reason || "General Consultation"}
                                 </p>
                                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                    📅 {apt.appointment_date} &nbsp;⏰ {apt.appointment_time}
+                                    📅 {apt.appointment_date}
+                                    {apt.status !== "pending" && apt.appointment_time && apt.appointment_time !== "00:00:00" ? (
+                                        <> &nbsp;⏰ {apt.appointment_time}</>
+                                    ) : (
+                                        <span className="ml-2 text-amber-500 dark:text-amber-400">⏳ Awaiting time slot</span>
+                                    )}
                                 </p>
                                 {apt.doctors?.profiles?.full_name && (
                                     <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">
@@ -177,7 +200,7 @@ export default function PatientAppointments() {
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Department</label>
                         <select
                             value={form.department_id}
-                            onChange={(e) => setForm({ ...form, department_id: e.target.value })}
+                            onChange={(e) => setForm({ ...form, department_id: e.target.value, doctor_id: "" })}
                             className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50"
                         >
                             <option value="">Select department</option>
@@ -186,27 +209,45 @@ export default function PatientAppointments() {
                             ))}
                         </select>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Date</label>
-                            <input
-                                type="date"
-                                value={form.appointment_date}
-                                onChange={(e) => setForm({ ...form, appointment_date: e.target.value })}
-                                required
-                                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Time</label>
-                            <input
-                                type="time"
-                                value={form.appointment_time}
-                                onChange={(e) => setForm({ ...form, appointment_time: e.target.value })}
-                                required
-                                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50"
-                            />
-                        </div>
+
+                    {/* Preferred Doctor with consultation time */}
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            Preferred Doctor <span className="text-slate-400 font-normal">(optional)</span>
+                        </label>
+                        <select
+                            value={form.doctor_id}
+                            onChange={(e) => setForm({ ...form, doctor_id: e.target.value })}
+                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50"
+                        >
+                            <option value="">Any available doctor</option>
+                            {filteredDoctors.map((d) => (
+                                <option key={d.id} value={d.id}>
+                                    Dr. {d.profiles?.full_name || "Unknown"} — {d.specialization || "General"}
+                                    {d.consultation_time ? ` (🕐 ${d.consultation_time})` : ""}
+                                </option>
+                            ))}
+                        </select>
+                        {form.doctor_id && (() => {
+                            const doc = doctors.find((d) => d.id === form.doctor_id);
+                            return doc?.consultation_time ? (
+                                <p className="text-xs text-teal-600 dark:text-teal-400 mt-1.5 flex items-center gap-1">
+                                    🕐 Consultation hours: {doc.consultation_time}
+                                </p>
+                            ) : null;
+                        })()}
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Preferred Date</label>
+                        <input
+                            type="date"
+                            value={form.appointment_date}
+                            onChange={(e) => setForm({ ...form, appointment_date: e.target.value })}
+                            required
+                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50"
+                        />
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">⏰ Time will be assigned by the office based on doctor availability.</p>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Reason</label>

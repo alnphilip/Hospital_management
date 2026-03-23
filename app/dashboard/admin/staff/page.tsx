@@ -73,8 +73,8 @@ export default function AdminStaff() {
                     phone: form.phone,
                     role: "staff",
                     extra: {
-                        department_id: form.department_id || null,
-                        position: form.position,
+                        department_id: form.department_id && form.department_id !== "general_staff" ? form.department_id : null,
+                        position: form.department_id === "general_staff" && !form.position ? "General Staff" : form.position,
                         shift: form.shift,
                     },
                 }),
@@ -166,7 +166,7 @@ export default function AdminStaff() {
                             <div className="space-y-1 text-xs text-slate-600 dark:text-slate-400">
                                 <p>
                                     🏥{" "}
-                                    {s.departments?.name || "No department"}
+                                    {s.departments?.name || "General Staff"}
                                 </p>
                                 <p>
                                     🕐 {s.shift?.charAt(0).toUpperCase()}
@@ -287,6 +287,7 @@ export default function AdminStaff() {
                             className={inputClasses}
                         >
                             <option value="">None</option>
+                            <option value="general_staff">General Staff</option>
                             {departments.map((d) => (
                                 <option key={d.id} value={d.id}>
                                     {d.name}
