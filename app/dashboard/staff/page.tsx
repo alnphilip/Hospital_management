@@ -50,7 +50,7 @@ export default function StaffOverview() {
     if (loading) {
         return (
             <div className="space-y-6 animate-fade-in">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Dashboard</h1>
+                <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {[1, 2, 3, 4, 5, 6].map((i) => <CardSkeleton key={i} />)}
                 </div>
@@ -59,13 +59,13 @@ export default function StaffOverview() {
     }
 
     return (
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-8 animate-fade-in">
+            {/* Context/Subtitle */}
             <div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Staff Dashboard 📋</h1>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Unified overview — manage all appointments across departments.</p>
+                <p className="text-muted text-[15px] font-medium tracking-wide">Unified overview — manage all appointments across departments.</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
                 <Card label="Total" value={stats.total} icon={CalendarDays} color="#8b5cf6" />
                 <Card label="Pending" value={stats.pending} icon={Clock} color="#f59e0b" />
                 <Card label="Verified" value={stats.verified} icon={CheckCircle} color="#0ea5e9" />
@@ -75,32 +75,69 @@ export default function StaffOverview() {
             </div>
 
             {/* Active Appointments */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-                    Active Appointments (All Departments)
-                </h2>
+            <div className="glass rounded-[2rem] border border-glass p-8">
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold tracking-tight text-foreground">
+                        Active Appointments (All Departments)
+                    </h2>
+                </div>
+                
                 {recentAppointments.length === 0 ? (
-                    <p className="text-sm text-slate-400 py-8 text-center">No active appointments.</p>
+                    <div className="flex flex-col items-center justify-center p-12 glass-panel rounded-2xl border border-dashed border-glass">
+                        <CalendarDays size={48} className="text-muted opacity-50 mb-4" />
+                        <p className="text-base text-muted font-medium">No active appointments found.</p>
+                    </div>
                 ) : (
-                    <div className="space-y-3">
+                    <div className="flex flex-col gap-4">
                         {recentAppointments.map((apt) => (
-                            <div key={apt.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-slate-900 dark:text-white">{apt.reason || "Consultation"}</p>
-                                    <div className="flex flex-wrap gap-x-3 text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                        <span>📅 {apt.appointment_date} {apt.appointment_time && apt.appointment_time !== "00:00:00" ? `⏰ ${apt.appointment_time}` : "⏳ No time set"}</span>
-                                        {apt.patients?.profiles?.full_name && (
-                                            <span>👤 {apt.patients.profiles.full_name}</span>
-                                        )}
-                                        {apt.doctors?.profiles?.full_name && (
-                                            <span className="text-teal-600 dark:text-teal-400">🩺 Dr. {apt.doctors.profiles.full_name}</span>
-                                        )}
-                                        {apt.departments?.name && (
-                                            <span>🏥 {apt.departments.name}</span>
-                                        )}
+                            <div key={apt.id} className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between p-5 rounded-2xl bg-white dark:bg-[#0f172a] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-200 dark:border-slate-800/80 transition-all hover:scale-[1.01] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)]">
+                                {/* Left: Subject & Status */}
+                                <div className="flex flex-col gap-1.5 flex-w">
+                                    <div className="flex items-center gap-3">
+                                        <p className="text-base font-semibold text-foreground">
+                                            {apt.reason || "General Consultation"}
+                                        </p>
+                                        <StatusBadge status={apt.status} />
+                                    </div>
+                                    
+                                    <div className="flex flex-wrap items-center gap-4 text-sm text-muted font-medium mt-1">
+                                        <div className="flex items-center gap-1.5">
+                                            <Clock size={15} className="text-primary opacity-80" />
+                                            <span>
+                                                {apt.appointment_date} 
+                                                {apt.appointment_time && apt.appointment_time !== "00:00:00" ? ` at ${apt.appointment_time}` : ""}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                                <StatusBadge status={apt.status} />
+
+                                {/* Right: People involved */}
+                                <div className="flex flex-col sm:items-end gap-2 shrink-0">
+                                    {apt.patients?.profiles?.full_name && (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-medium text-foreground">{apt.patients.profiles.full_name}</span>
+                                            <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+                                                <Users size={12} />
+                                            </div>
+                                        </div>
+                                    )}
+                                    {apt.doctors?.profiles?.full_name && (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-medium text-muted">Dr. {apt.doctors.profiles.full_name}</span>
+                                            <div className="w-6 h-6 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-500">
+                                                <Stethoscope size={12} />
+                                            </div>
+                                        </div>
+                                    )}
+                                    {apt.departments?.name && (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-semibold text-muted tracking-wider uppercase">{apt.departments.name}</span>
+                                            <div className="w-6 h-6 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500">
+                                                <Building2 size={12} />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         ))}
                     </div>

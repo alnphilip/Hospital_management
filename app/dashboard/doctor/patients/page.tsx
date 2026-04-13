@@ -127,7 +127,7 @@ export default function DoctorPatients() {
     if (loading) {
         return (
             <div className="space-y-6 animate-fade-in">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">My Patients</h1>
+                <h1 className="text-2xl font-bold text-foreground">My Patients</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[1, 2, 3].map((i) => <CardSkeleton key={i} />)}
                 </div>
@@ -138,17 +138,17 @@ export default function DoctorPatients() {
     return (
         <div className="space-y-6 animate-fade-in">
             <div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">My Patients 👥</h1>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+                <h1 className="text-2xl font-bold text-foreground">My Patients 👥</h1>
+                <p className="text-muted text-sm mt-1">
                     Click a patient to view history and write prescriptions.
                 </p>
             </div>
 
             {patients.length === 0 ? (
-                <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <Users className="mx-auto text-slate-300 dark:text-slate-600 mb-3" size={40} />
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">No patients assigned yet.</p>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                <div className="text-center py-16 glass rounded-2xl border border-glass">
+                    <Users className="mx-auto text-slate-300 dark:text-muted mb-3" size={40} />
+                    <p className="text-muted text-sm">No patients assigned yet.</p>
+                    <p className="text-xs text-slate-400 dark:text-muted mt-1">
                         Patients will appear here once appointments are assigned to you.
                     </p>
                 </div>
@@ -163,7 +163,7 @@ export default function DoctorPatients() {
                         return (
                             <div
                                 key={patient.id}
-                                className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-200"
+                                className="glass rounded-2xl border border-glass overflow-hidden transition-all duration-200"
                             >
                                 {/* Clickable header */}
                                 <button
@@ -175,13 +175,13 @@ export default function DoctorPatients() {
                                             {(patient.profiles?.full_name || "?")[0].toUpperCase()}
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                                            <p className="text-sm font-semibold text-foreground truncate">
                                                 {patient.profiles?.full_name || "Unknown"}
                                             </p>
                                             <p className="text-xs font-medium text-teal-600 dark:text-teal-400 mt-0.5">
                                                 {patient.op_number || "OP-Pending"}
                                             </p>
-                                            <div className="flex flex-wrap items-center gap-x-3 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                            <div className="flex flex-wrap items-center gap-x-3 text-xs text-muted mt-1">
                                                 <span className="capitalize">{patient.gender || "—"}</span>
                                                 {patient.blood_group && <span>🩸 {patient.blood_group}</span>}
                                                 {patient.date_of_birth && (
@@ -195,19 +195,19 @@ export default function DoctorPatients() {
                                             {patient.appointment_count} visit{patient.appointment_count !== 1 ? "s" : ""}
                                         </div>
                                         {isExpanded ? (
-                                            <ChevronUp size={18} className="text-slate-400" />
+                                            <ChevronUp size={18} className="text-muted" />
                                         ) : (
-                                            <ChevronDown size={18} className="text-slate-400" />
+                                            <ChevronDown size={18} className="text-muted" />
                                         )}
                                     </div>
                                 </button>
 
                                 {/* Expanded content */}
                                 {isExpanded && (
-                                    <div className="px-5 pb-5 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                                    <div className="px-5 pb-5 border-t border-glass space-y-4">
                                         {/* Action button */}
                                         <div className="flex items-center justify-between pt-4">
-                                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                                            <p className="text-xs text-muted">
                                                 {patient.last_appointment
                                                     ? `Last visit: ${new Date(patient.last_appointment).toLocaleDateString()}`
                                                     : "No visits yet"}
@@ -224,19 +224,19 @@ export default function DoctorPatients() {
 
                                         {/* Appointments */}
                                         <div>
-                                            <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
+                                            <h4 className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1.5">
                                                 <Calendar size={13} /> Appointments
                                             </h4>
                                             {(patient.appointments || []).length === 0 ? (
-                                                <p className="text-xs text-slate-400 pl-5">No appointments.</p>
+                                                <p className="text-xs text-muted pl-5">No appointments.</p>
                                             ) : (
                                                 <div className="space-y-1.5 pl-5">
                                                     {(patient.appointments || []).map((apt) => (
                                                         <div
                                                             key={apt.id}
-                                                            className="flex items-center justify-between text-xs px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800/50"
+                                                            className="flex items-center justify-between text-xs px-3 py-2 rounded-lg glass-panel"
                                                         >
-                                                            <span className="text-slate-700 dark:text-slate-300">
+                                                            <span className="text-foreground">
                                                                 {apt.appointment_date} · {apt.appointment_time} — {apt.reason || "Consultation"}
                                                             </span>
                                                             <StatusBadge status={apt.status} />
@@ -248,11 +248,11 @@ export default function DoctorPatients() {
 
                                         {/* Prescriptions */}
                                         <div>
-                                            <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-1.5">
+                                            <h4 className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1.5">
                                                 <Pill size={13} /> Prescriptions
                                             </h4>
                                             {(patient.prescriptions || []).length === 0 ? (
-                                                <p className="text-xs text-slate-400 pl-5">No prescriptions written yet.</p>
+                                                <p className="text-xs text-muted pl-5">No prescriptions written yet.</p>
                                             ) : (
                                                 <div className="space-y-2 pl-5">
                                                     {(patient.prescriptions || []).map((rx) => (
@@ -261,24 +261,24 @@ export default function DoctorPatients() {
                                                             className="px-3 py-2.5 rounded-lg bg-violet-50 dark:bg-violet-950/30 border border-violet-100 dark:border-violet-900/40"
                                                         >
                                                             <div className="flex items-start justify-between">
-                                                                <p className="text-xs font-medium text-slate-900 dark:text-white">
+                                                                <p className="text-xs font-medium text-foreground">
                                                                     {rx.diagnosis || "Prescription"}
                                                                 </p>
-                                                                <span className="text-[10px] text-slate-400">
+                                                                <span className="text-[10px] text-muted">
                                                                     {new Date(rx.created_at).toLocaleDateString()}
                                                                 </span>
                                                             </div>
                                                             {rx.medications?.length > 0 && (
                                                                 <div className="mt-1.5 space-y-0.5">
                                                                     {rx.medications.map((m, i) => (
-                                                                        <p key={i} className="text-xs text-slate-600 dark:text-slate-400">
+                                                                        <p key={i} className="text-xs text-muted">
                                                                             💊 {m.name} — {m.dosage} ({m.frequency})
                                                                         </p>
                                                                     ))}
                                                                 </div>
                                                             )}
                                                             {rx.instructions && (
-                                                                <p className="text-[11px] text-slate-500 mt-1">📝 {rx.instructions}</p>
+                                                                <p className="text-[11px] text-muted mt-1">📝 {rx.instructions}</p>
                                                             )}
                                                         </div>
                                                     ))}
@@ -301,14 +301,14 @@ export default function DoctorPatients() {
             >
                 <form onSubmit={handleCreatePrescription} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                        <label className="block text-sm font-medium text-foreground mb-1">
                             Appointment
                         </label>
                         <select
                             value={rxForm.appointment_id}
                             onChange={(e) => setRxForm({ ...rxForm, appointment_id: e.target.value })}
                             required
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                            className="w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                         >
                             <option value="">Select appointment</option>
                             {(rxPatient?.appointments || [])
@@ -321,7 +321,7 @@ export default function DoctorPatients() {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                        <label className="block text-sm font-medium text-foreground mb-1">
                             Diagnosis
                         </label>
                         <input
@@ -329,11 +329,11 @@ export default function DoctorPatients() {
                             value={rxForm.diagnosis}
                             onChange={(e) => setRxForm({ ...rxForm, diagnosis: e.target.value })}
                             placeholder="e.g. Acute bronchitis"
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                            className="w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                        <label className="block text-sm font-medium text-foreground mb-1">
                             Medication
                         </label>
                         <div className="grid grid-cols-3 gap-2">
@@ -342,26 +342,26 @@ export default function DoctorPatients() {
                                 placeholder="Med name"
                                 value={rxForm.med_name}
                                 onChange={(e) => setRxForm({ ...rxForm, med_name: e.target.value })}
-                                className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none"
+                                className="px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none"
                             />
                             <input
                                 type="text"
                                 placeholder="Dosage"
                                 value={rxForm.med_dosage}
                                 onChange={(e) => setRxForm({ ...rxForm, med_dosage: e.target.value })}
-                                className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none"
+                                className="px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none"
                             />
                             <input
                                 type="text"
                                 placeholder="Frequency"
                                 value={rxForm.med_frequency}
                                 onChange={(e) => setRxForm({ ...rxForm, med_frequency: e.target.value })}
-                                className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none"
+                                className="px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none"
                             />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                        <label className="block text-sm font-medium text-foreground mb-1">
                             Instructions
                         </label>
                         <textarea
@@ -369,7 +369,7 @@ export default function DoctorPatients() {
                             onChange={(e) => setRxForm({ ...rxForm, instructions: e.target.value })}
                             rows={2}
                             placeholder="Additional instructions..."
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm resize-none focus:outline-none"
+                            className="w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm resize-none focus:outline-none"
                         />
                     </div>
                     <button

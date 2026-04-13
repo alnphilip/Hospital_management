@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, Clock, Activity, Building2 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { TableSkeleton } from "@/components/ui/Skeleton";
@@ -130,7 +130,7 @@ export default function PatientAppointments() {
     if (loading) {
         return (
             <div className="space-y-6 animate-fade-in">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Appointments</h1>
+                <h1 className="text-2xl font-bold text-foreground">Appointments</h1>
                 <TableSkeleton />
             </div>
         );
@@ -139,7 +139,7 @@ export default function PatientAppointments() {
     return (
         <div className="space-y-6 animate-fade-in">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Appointments</h1>
+                <h1 className="text-2xl font-bold text-foreground">Appointments</h1>
                 <button
                     onClick={() => setShowModal(true)}
                     className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-teal-500 rounded-xl hover:from-sky-600 hover:to-teal-600 shadow-lg shadow-sky-500/25 transition-all"
@@ -151,43 +151,73 @@ export default function PatientAppointments() {
 
             {/* Appointments List */}
             {appointments.length === 0 ? (
-                <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <p className="text-slate-400 text-sm">No appointments yet.</p>
+                <div className="text-center py-16 glass rounded-2xl border border-glass">
+                    <p className="text-muted text-sm">No appointments yet.</p>
                 </div>
             ) : (
-                <div className="space-y-3">
+                <div className="flex flex-col gap-4">
                     {appointments.map((apt) => (
                         <div
                             key={apt.id}
-                            className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:shadow-md transition-shadow"
+                            className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between p-5 rounded-2xl bg-white dark:bg-[#0f172a] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-200 dark:border-slate-800/80 transition-all hover:scale-[1.01] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)]"
                         >
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                                    {apt.reason || "General Consultation"}
-                                </p>
-                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                    📅 {apt.appointment_date}
-                                    {apt.status !== "pending" && apt.appointment_time && apt.appointment_time !== "00:00:00" ? (
-                                        <> &nbsp;⏰ {apt.appointment_time}</>
-                                    ) : (
-                                        <span className="ml-2 text-amber-500 dark:text-amber-400">⏳ Awaiting time slot</span>
+                            <div className="flex flex-col gap-1.5 min-w-0">
+                                <div className="flex items-center gap-3">
+                                    <p className="text-base font-semibold text-foreground">
+                                        {apt.reason || "General Consultation"}
+                                    </p>
+                                    <StatusBadge status={apt.status} />
+                                </div>
+                                
+                                <div className="flex flex-wrap items-center gap-4 text-sm text-muted font-medium mt-1">
+                                    <div className="flex items-center gap-1.5 text-primary opacity-80 mt-1">
+                                        <Clock size={15} />
+                                        <span>
+                                            {apt.appointment_date}
+                                            {apt.status !== "pending" && apt.appointment_time && apt.appointment_time !== "00:00:00" ? (
+                                                <> at {apt.appointment_time}</>
+                                            ) : (
+                                                <span className="ml-1 text-amber-500 dark:text-amber-400">— Awaiting time slot</span>
+                                            )}
+                                        </span>
+                                    </div>
+                                    
+                                    {apt.departments?.name && (
+                                        <div className="flex items-center gap-1.5 mt-1">
+                                            <Building2 size={13} className="text-purple-500/80" />
+                                            <span className="text-xs font-semibold tracking-wider uppercase text-muted">{apt.departments.name}</span>
+                                        </div>
                                     )}
-                                </p>
-                                {apt.doctors?.profiles?.full_name && (
-                                    <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">
-                                        🩺 Dr. {apt.doctors.profiles.full_name} ({apt.doctors.specialization})
-                                    </p>
-                                )}
-                                {apt.departments?.name && (
-                                    <p className="text-xs text-slate-400 mt-0.5">🏥 {apt.departments.name}</p>
-                                )}
+                                </div>
+                                
                                 {apt.notes && (
-                                    <p className="text-xs text-slate-400 mt-1 truncate">
-                                        Notes: {apt.notes}
-                                    </p>
+                                    <div className="mt-3 px-4 py-2.5 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-glass inline-block max-w-full truncate text-xs text-muted">
+                                        <span className="font-semibold text-foreground mr-1">Notes:</span> {apt.notes}
+                                    </div>
                                 )}
                             </div>
-                            <StatusBadge status={apt.status} />
+
+                            {/* Right Side Doctor Contact */}
+                             <div className="flex items-center gap-2 shrink-0 sm:self-end mt-2 sm:mt-0">
+                                {apt.doctors?.profiles?.full_name ? (
+                                    <>
+                                        <div className="flex flex-col items-end">
+                                            <span className="text-sm font-medium text-foreground">Dr. {apt.doctors.profiles.full_name}</span>
+                                            <span className="text-xs uppercase tracking-wider text-muted font-semibold">{apt.doctors.specialization}</span>
+                                        </div>
+                                        <div className="w-9 h-9 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-500 ml-2">
+                                            <Activity size={16} />
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="flex items-center gap-2 text-muted">
+                                        <span className="text-sm font-medium">Unassigned</span>
+                                        <div className="w-9 h-9 rounded-full bg-slate-500/10 flex items-center justify-center text-slate-500 ml-2">
+                                            <Loader2 size={16} />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -197,11 +227,11 @@ export default function PatientAppointments() {
             <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Book Appointment">
                 <form onSubmit={handleCreate} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Department</label>
+                        <label className="block text-sm font-medium text-foreground mb-1">Department</label>
                         <select
                             value={form.department_id}
                             onChange={(e) => setForm({ ...form, department_id: e.target.value, doctor_id: "" })}
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50"
+                            className="w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50"
                         >
                             <option value="">Select department</option>
                             {departments.map((d) => (
@@ -212,13 +242,13 @@ export default function PatientAppointments() {
 
                     {/* Preferred Doctor with consultation time */}
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                            Preferred Doctor <span className="text-slate-400 font-normal">(optional)</span>
+                        <label className="block text-sm font-medium text-foreground mb-1">
+                            Preferred Doctor <span className="text-muted font-normal">(optional)</span>
                         </label>
                         <select
                             value={form.doctor_id}
                             onChange={(e) => setForm({ ...form, doctor_id: e.target.value })}
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50"
+                            className="w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50"
                         >
                             <option value="">Any available doctor</option>
                             {filteredDoctors.map((d) => (
@@ -239,24 +269,24 @@ export default function PatientAppointments() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Preferred Date</label>
+                        <label className="block text-sm font-medium text-foreground mb-1">Preferred Date</label>
                         <input
                             type="date"
                             value={form.appointment_date}
                             onChange={(e) => setForm({ ...form, appointment_date: e.target.value })}
                             required
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50"
+                            className="w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50"
                         />
-                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">⏰ Time will be assigned by the office based on doctor availability.</p>
+                        <p className="text-xs text-slate-400 dark:text-muted mt-1">⏰ Time will be assigned by the office based on doctor availability.</p>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Reason</label>
+                        <label className="block text-sm font-medium text-foreground mb-1">Reason</label>
                         <textarea
                             value={form.reason}
                             onChange={(e) => setForm({ ...form, reason: e.target.value })}
                             placeholder="Describe your reason for visit..."
                             rows={3}
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50 resize-none"
+                            className="w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50 resize-none"
                         />
                     </div>
                     <button

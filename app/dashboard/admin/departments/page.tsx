@@ -228,7 +228,7 @@ export default function AdminDepartments() {
     if (loading) {
         return (
             <div className="space-y-6 animate-fade-in">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                <h1 className="text-2xl font-bold text-foreground">
                     Departments
                 </h1>
                 <TableSkeleton />
@@ -241,10 +241,10 @@ export default function AdminDepartments() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                    <h1 className="text-2xl font-bold text-foreground">
                         Departments
                     </h1>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                    <p className="text-sm text-muted mt-1">
                         {departments.length} department
                         {departments.length !== 1 ? "s" : ""} active
                         {" · "}Click to view assigned doctors &amp; staff
@@ -264,12 +264,12 @@ export default function AdminDepartments() {
 
             {/* Empty state */}
             {departments.length === 0 ? (
-                <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <div className="text-center py-16 glass rounded-2xl border border-glass">
                     <Building2
                         size={40}
-                        className="mx-auto text-slate-300 dark:text-slate-600 mb-3"
+                        className="mx-auto text-slate-300 dark:text-muted mb-3"
                     />
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">
+                    <p className="text-muted text-sm">
                         No departments yet. Click &quot;Add Departments&quot; to
                         get started.
                     </p>
@@ -282,9 +282,9 @@ export default function AdminDepartments() {
                         return (
                             <div
                                 key={dept.id}
-                                className={`bg-white dark:bg-slate-900 rounded-2xl border transition-all duration-300 ${isExpanded
+                                className={`glass rounded-2xl border transition-all duration-300 ${isExpanded
                                     ? "border-violet-300 dark:border-violet-700 shadow-lg shadow-violet-500/5"
-                                    : "border-slate-200 dark:border-slate-800 hover:shadow-md"
+                                    : "border-glass hover:shadow-md"
                                     }`}
                             >
                                 {/* Department header — clickable */}
@@ -304,10 +304,10 @@ export default function AdminDepartments() {
 
                                     {/* Info */}
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white truncate">
+                                        <h3 className="text-sm sm:text-base font-semibold text-foreground truncate">
                                             {dept.name}
                                         </h3>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                                        <p className="text-xs text-muted mt-0.5 truncate">
                                             {dept.description || "No description"}
                                         </p>
                                     </div>
@@ -316,14 +316,14 @@ export default function AdminDepartments() {
                                     <div className="flex items-center gap-2 shrink-0">
                                         <div
                                             onClick={(e) => handleDelete(dept.id, e)}
-                                            className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all opacity-0 group-hover:opacity-100 sm:opacity-100"
+                                            className="p-1.5 rounded-lg text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all opacity-0 group-hover:opacity-100 sm:opacity-100"
                                             role="button"
                                             tabIndex={0}
                                         >
                                             <Trash2 size={15} />
                                         </div>
                                         <div
-                                            className={`p-1 rounded-lg transition-transform duration-200 ${isExpanded ? "text-violet-600 dark:text-violet-400" : "text-slate-400"
+                                            className={`p-1 rounded-lg transition-transform duration-200 ${isExpanded ? "text-violet-600 dark:text-violet-400" : "text-muted"
                                                 }`}
                                         >
                                             {isExpanded ? (
@@ -337,9 +337,9 @@ export default function AdminDepartments() {
 
                                 {/* Expanded content — Doctors & Staff */}
                                 {isExpanded && (
-                                    <div className="border-t border-slate-100 dark:border-slate-800 px-4 sm:px-5 pb-5 animate-fade-in">
+                                    <div className="border-t border-glass px-4 sm:px-5 pb-5 animate-fade-in">
                                         {loadingMembers ? (
-                                            <div className="flex items-center justify-center py-8 gap-2 text-slate-400">
+                                            <div className="flex items-center justify-center py-8 gap-2 text-muted">
                                                 <Loader2 size={18} className="animate-spin" />
                                                 <span className="text-sm">Loading members...</span>
                                             </div>
@@ -349,7 +349,7 @@ export default function AdminDepartments() {
                                                 <div>
                                                     <div className="flex items-center gap-2 mb-3">
                                                         <Stethoscope size={15} className="text-teal-500" />
-                                                        <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                                        <h4 className="text-sm font-semibold text-foreground">
                                                             Doctors
                                                         </h4>
                                                         <span className="text-xs bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 px-2 py-0.5 rounded-full font-medium">
@@ -358,9 +358,9 @@ export default function AdminDepartments() {
                                                     </div>
 
                                                     {deptDoctors.length === 0 ? (
-                                                        <div className="text-center py-6 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
-                                                            <UserCircle size={24} className="mx-auto text-slate-300 dark:text-slate-600 mb-1" />
-                                                            <p className="text-xs text-slate-400">
+                                                        <div className="text-center py-6 glass-panel rounded-xl border border-dashed border-glass">
+                                                            <UserCircle size={24} className="mx-auto text-slate-300 dark:text-muted mb-1" />
+                                                            <p className="text-xs text-muted">
                                                                 No doctors assigned
                                                             </p>
                                                         </div>
@@ -369,16 +369,16 @@ export default function AdminDepartments() {
                                                             {deptDoctors.map((doc) => (
                                                                 <div
                                                                     key={doc.id}
-                                                                    className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50"
+                                                                    className="flex items-center gap-3 p-3 glass-panel rounded-xl border border-glass"
                                                                 >
                                                                     <div className="w-9 h-9 rounded-full bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center text-teal-600 dark:text-teal-400 font-bold text-xs shrink-0">
                                                                         {doc.profiles?.full_name?.charAt(0)?.toUpperCase() || "D"}
                                                                     </div>
                                                                     <div className="flex-1 min-w-0">
-                                                                        <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                                                                        <p className="text-sm font-medium text-foreground truncate">
                                                                             {doc.profiles?.full_name || "Unknown"}
                                                                         </p>
-                                                                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                                                                        <p className="text-xs text-muted truncate">
                                                                             {doc.specialization || "General"} · {doc.qualification || "N/A"} · {doc.experience_years}yr
                                                                         </p>
                                                                     </div>
@@ -400,7 +400,7 @@ export default function AdminDepartments() {
                                                 <div>
                                                     <div className="flex items-center gap-2 mb-3">
                                                         <Users size={15} className="text-purple-500" />
-                                                        <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                                        <h4 className="text-sm font-semibold text-foreground">
                                                             Office Staff
                                                         </h4>
                                                         <span className="text-xs bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded-full font-medium">
@@ -409,9 +409,9 @@ export default function AdminDepartments() {
                                                     </div>
 
                                                     {deptStaff.length === 0 ? (
-                                                        <div className="text-center py-6 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
-                                                            <UserCircle size={24} className="mx-auto text-slate-300 dark:text-slate-600 mb-1" />
-                                                            <p className="text-xs text-slate-400">
+                                                        <div className="text-center py-6 glass-panel rounded-xl border border-dashed border-glass">
+                                                            <UserCircle size={24} className="mx-auto text-slate-300 dark:text-muted mb-1" />
+                                                            <p className="text-xs text-muted">
                                                                 No staff assigned
                                                             </p>
                                                         </div>
@@ -420,20 +420,20 @@ export default function AdminDepartments() {
                                                             {deptStaff.map((s) => (
                                                                 <div
                                                                     key={s.id}
-                                                                    className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50"
+                                                                    className="flex items-center gap-3 p-3 glass-panel rounded-xl border border-glass"
                                                                 >
                                                                     <div className="w-9 h-9 rounded-full bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center text-purple-600 dark:text-purple-400 font-bold text-xs shrink-0">
                                                                         {s.profiles?.full_name?.charAt(0)?.toUpperCase() || "S"}
                                                                     </div>
                                                                     <div className="flex-1 min-w-0">
-                                                                        <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                                                                        <p className="text-sm font-medium text-foreground truncate">
                                                                             {s.profiles?.full_name || "Unknown"}
                                                                         </p>
-                                                                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                                                                        <p className="text-xs text-muted truncate">
                                                                             {s.position || "Staff"} · {s.shift?.charAt(0).toUpperCase()}{s.shift?.slice(1)} shift
                                                                         </p>
                                                                     </div>
-                                                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 shrink-0">
+                                                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold glass-panel text-muted shrink-0">
                                                                         📞 {s.profiles?.phone || "N/A"}
                                                                     </span>
                                                                 </div>
@@ -473,20 +473,20 @@ export default function AdminDepartments() {
                     <div className="relative">
                         <Search
                             size={16}
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
                         />
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search departments..."
-                            className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                            className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"
                         />
                         {searchQuery && (
                             <button
                                 type="button"
                                 onClick={() => setSearchQuery("")}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-muted"
                             >
                                 <X size={14} />
                             </button>
@@ -496,7 +496,7 @@ export default function AdminDepartments() {
                     {/* Select all toggle */}
                     {filteredDepartments.length > 0 && (
                         <div className="flex items-center justify-between">
-                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                            <p className="text-xs text-muted">
                                 {selected.size} of {filteredDepartments.length}{" "}
                                 selected
                             </p>
@@ -516,7 +516,7 @@ export default function AdminDepartments() {
                     <div className="max-h-72 overflow-y-auto space-y-2 pr-1">
                         {filteredDepartments.length === 0 ? (
                             <div className="text-center py-8">
-                                <p className="text-slate-400 text-sm">
+                                <p className="text-muted text-sm">
                                     {availableDepartments.length === 0
                                         ? "All departments have already been added! 🎉"
                                         : "No departments match your search."}
@@ -534,7 +534,7 @@ export default function AdminDepartments() {
                                         }
                                         className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${isSelected
                                             ? "border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30 shadow-sm"
-                                            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:border-slate-300 dark:hover:border-slate-600"
+                                            : "border-glass glass hover:border-slate-300 dark:hover:border-slate-600"
                                             }`}
                                     >
                                         {/* Checkbox */}
@@ -557,12 +557,12 @@ export default function AdminDepartments() {
                                             <p
                                                 className={`text-sm font-medium ${isSelected
                                                     ? "text-red-700 dark:text-red-300"
-                                                    : "text-slate-900 dark:text-white"
+                                                    : "text-foreground"
                                                     }`}
                                             >
                                                 {dept.name}
                                             </p>
-                                            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                                            <p className="text-xs text-muted truncate">
                                                 {dept.description}
                                             </p>
                                         </div>

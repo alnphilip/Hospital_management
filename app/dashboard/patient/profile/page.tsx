@@ -93,7 +93,7 @@ export default function PatientProfile() {
     }
 
     const inputClasses =
-        "w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50";
+        "w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50";
 
     // Read-only view
     if (!editing) {
@@ -112,7 +112,7 @@ export default function PatientProfile() {
         return (
             <div className="max-w-2xl space-y-6 animate-fade-in">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">My Profile</h1>
+                    <h1 className="text-2xl font-bold text-foreground">My Profile</h1>
                     <button
                         onClick={startEditing}
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-teal-500 hover:from-sky-600 hover:to-teal-600 shadow-lg shadow-sky-500/25 transition-all"
@@ -121,16 +121,16 @@ export default function PatientProfile() {
                     </button>
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+                <div className="glass rounded-2xl border border-glass p-6">
                     {/* Avatar header */}
-                    <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-200 dark:border-slate-800">
+                    <div className="flex items-center gap-4 mb-6 pb-6 border-b border-glass">
                         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-teal-500 flex items-center justify-center text-white font-bold text-2xl">
                             {profile.full_name?.charAt(0)?.toUpperCase() || "P"}
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{profile.full_name || "—"}</h2>
+                            <h2 className="text-lg font-bold text-foreground">{profile.full_name || "—"}</h2>
                             <p className="text-sm font-semibold text-teal-600 dark:text-teal-400 mt-0.5">{profile.op_number || "OP-Pending"}</p>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{profile.email}</p>
+                            <p className="text-sm text-muted mt-1">{profile.email}</p>
                         </div>
                     </div>
 
@@ -139,14 +139,14 @@ export default function PatientProfile() {
                         {fields.slice(2).map((f) => {
                             const Icon = f.icon;
                             return (
-                                <div key={f.label} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+                                <div key={f.label} className="flex items-start gap-3 p-3 rounded-xl glass-panel">
                                     <div className="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/40 flex items-center justify-center shrink-0">
                                         <Icon size={14} className="text-sky-600 dark:text-sky-400" />
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">{f.label}</p>
-                                        <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
-                                            {f.value || <span className="text-slate-400 italic font-normal">Not provided</span>}
+                                        <p className="text-xs text-muted">{f.label}</p>
+                                        <p className="text-sm font-medium text-foreground truncate">
+                                            {f.value || <span className="text-muted italic font-normal">Not provided</span>}
                                         </p>
                                     </div>
                                 </div>
@@ -162,31 +162,31 @@ export default function PatientProfile() {
     return (
         <div className="max-w-2xl space-y-6 animate-fade-in">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Edit Profile</h1>
+                <h1 className="text-2xl font-bold text-foreground">Edit Profile</h1>
                 <button
                     onClick={cancelEditing}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 glass-panel hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
                 >
                     <X size={14} /> Cancel
                 </button>
             </div>
 
-            <form onSubmit={handleSave} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4">
+            <form onSubmit={handleSave} className="glass rounded-2xl border border-glass p-6 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
+                        <label className="block text-sm font-medium text-foreground mb-1">Full Name</label>
                         <input type="text" value={editForm.full_name} onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })} className={inputClasses} />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone</label>
+                        <label className="block text-sm font-medium text-foreground mb-1">Phone</label>
                         <input type="tel" value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} className={inputClasses} />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Date of Birth</label>
+                        <label className="block text-sm font-medium text-foreground mb-1">Date of Birth</label>
                         <input type="date" value={editForm.date_of_birth} onChange={(e) => setEditForm({ ...editForm, date_of_birth: e.target.value })} className={inputClasses} />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Gender</label>
+                        <label className="block text-sm font-medium text-foreground mb-1">Gender</label>
                         <select value={editForm.gender} onChange={(e) => setEditForm({ ...editForm, gender: e.target.value })} className={inputClasses}>
                             <option value="">Select</option>
                             <option value="male">Male</option>
@@ -195,16 +195,16 @@ export default function PatientProfile() {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Blood Group</label>
+                        <label className="block text-sm font-medium text-foreground mb-1">Blood Group</label>
                         <input type="text" value={editForm.blood_group} onChange={(e) => setEditForm({ ...editForm, blood_group: e.target.value })} placeholder="e.g. O+" className={inputClasses} />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Emergency Contact</label>
+                        <label className="block text-sm font-medium text-foreground mb-1">Emergency Contact</label>
                         <input type="text" value={editForm.emergency_contact} onChange={(e) => setEditForm({ ...editForm, emergency_contact: e.target.value })} className={inputClasses} />
                     </div>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Address</label>
+                    <label className="block text-sm font-medium text-foreground mb-1">Address</label>
                     <textarea value={editForm.address} onChange={(e) => setEditForm({ ...editForm, address: e.target.value })} rows={2} className={`${inputClasses} resize-none`} />
                 </div>
 

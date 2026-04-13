@@ -52,7 +52,7 @@ export default function PatientDepartments() {
     if (loading) {
         return (
             <div className="space-y-6 animate-fade-in">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Departments</h1>
+                <h1 className="text-2xl font-bold text-foreground">Departments</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {[1, 2, 3].map((i) => <CardSkeleton key={i} />)}
                 </div>
@@ -63,16 +63,16 @@ export default function PatientDepartments() {
     return (
         <div className="space-y-6 animate-fade-in">
             <div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Departments 🏥</h1>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+                <h1 className="text-2xl font-bold text-foreground">Departments 🏥</h1>
+                <p className="text-muted text-sm mt-1">
                     Browse available hospital departments and their doctors.
                 </p>
             </div>
 
             {departments.length === 0 ? (
-                <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <Building2 className="mx-auto text-slate-300 dark:text-slate-600 mb-3" size={40} />
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">No departments found.</p>
+                <div className="text-center py-16 glass rounded-2xl border border-glass">
+                    <Building2 className="mx-auto text-slate-300 dark:text-muted mb-3" size={40} />
+                    <p className="text-muted text-sm">No departments found.</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -80,10 +80,10 @@ export default function PatientDepartments() {
                         <div
                             key={dept.id}
                             onClick={() => setSelectedDept(selectedDept === dept.id ? null : dept.id)}
-                            className={`bg-white dark:bg-slate-900 rounded-2xl border p-6 hover:shadow-lg hover:shadow-sky-500/5 transition-all duration-200 cursor-pointer ${
+                            className={`glass rounded-2xl border p-6 hover:shadow-lg hover:shadow-sky-500/5 transition-all duration-200 cursor-pointer ${
                                 selectedDept === dept.id
                                     ? "border-teal-500 dark:border-teal-500"
-                                    : "border-slate-200 dark:border-slate-800"
+                                    : "border-glass"
                             }`}
                         >
                             <div className="flex items-start gap-3 mb-3">
@@ -91,15 +91,15 @@ export default function PatientDepartments() {
                                     <Building2 className="text-white" size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+                                    <h3 className="text-sm font-semibold text-foreground">
                                         {dept.name}
                                     </h3>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                    <p className="text-xs text-muted mt-0.5">
                                         {dept.description || "No description available"}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800">
+                            <div className="flex items-center gap-1.5 text-xs text-muted pt-3 border-t border-glass">
                                 <Users size={14} />
                                 <span>{dept.doctor_count} doctor{dept.doctor_count !== 1 ? "s" : ""} available</span>
                             </div>
@@ -109,24 +109,24 @@ export default function PatientDepartments() {
             )}
 
             {selectedDept && (
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-                    <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+                <div className="glass rounded-2xl border border-glass p-6">
+                    <h2 className="text-lg font-semibold text-foreground mb-4">
                         Doctors in {departments.find((d) => d.id === selectedDept)?.name}
                     </h2>
                     {filteredDoctors.length === 0 ? (
-                        <p className="text-sm text-slate-400 text-center py-4">No doctors in this department.</p>
+                        <p className="text-sm text-muted text-center py-4">No doctors in this department.</p>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {filteredDoctors.map((doc) => (
-                                <div key={doc.id} className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+                                <div key={doc.id} className="flex items-center gap-3 p-3 rounded-xl glass-panel">
                                     <div className="w-9 h-9 rounded-full bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center text-teal-600 dark:text-teal-400 text-sm font-bold">
                                         {(doc.profiles?.full_name || "?")[0]}
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-slate-900 dark:text-white">
+                                        <p className="text-sm font-medium text-foreground">
                                             Dr. {doc.profiles?.full_name || "Unknown"}
                                         </p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">{doc.specialization}</p>
+                                        <p className="text-xs text-muted">{doc.specialization}</p>
                                     </div>
                                 </div>
                             ))}

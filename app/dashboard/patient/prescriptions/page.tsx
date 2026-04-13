@@ -34,7 +34,7 @@ export default function PatientPrescriptions() {
     if (loading) {
         return (
             <div className="space-y-6 animate-fade-in">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Prescriptions</h1>
+                <h1 className="text-2xl font-bold text-foreground">Prescriptions</h1>
                 <TableSkeleton />
             </div>
         );
@@ -42,25 +42,25 @@ export default function PatientPrescriptions() {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">My Prescriptions</h1>
+            <h1 className="text-2xl font-bold text-foreground">My Prescriptions</h1>
 
             {prescriptions.length === 0 ? (
-                <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <p className="text-slate-400 text-sm">No prescriptions found.</p>
+                <div className="text-center py-16 glass rounded-2xl border border-glass">
+                    <p className="text-muted text-sm">No prescriptions found.</p>
                 </div>
             ) : (
                 <div className="space-y-4">
                     {prescriptions.map((rx) => (
                         <div
                             key={rx.id}
-                            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5"
+                            className="glass rounded-2xl border border-glass p-5"
                         >
                             <div className="flex items-start justify-between mb-3">
                                 <div>
-                                    <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+                                    <h3 className="text-sm font-semibold text-foreground">
                                         {rx.diagnosis || "General Prescription"}
                                     </h3>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                    <p className="text-xs text-muted mt-0.5">
                                         {new Date(rx.created_at).toLocaleDateString()}
                                     </p>
                                 </div>
@@ -72,7 +72,7 @@ export default function PatientPrescriptions() {
                             </div>
 
                             {rx.doctors?.specialization && (
-                                <p className="text-xs text-slate-400 mb-2">Specialization: {rx.doctors.specialization}</p>
+                                <p className="text-xs text-muted mb-2">Specialization: {rx.doctors.specialization}</p>
                             )}
 
                             {rx.medications && rx.medications.length > 0 && (
@@ -80,14 +80,14 @@ export default function PatientPrescriptions() {
                                     {rx.medications.map((med, i) => (
                                         <div
                                             key={i}
-                                            className="flex items-center gap-3 px-3 py-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl text-sm"
+                                            className="flex items-center gap-3 px-3 py-2 glass-panel rounded-xl text-sm"
                                         >
                                             <span className="w-6 h-6 rounded-full bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xs font-bold">
                                                 {i + 1}
                                             </span>
                                             <div>
-                                                <span className="font-medium text-slate-900 dark:text-white">{med.name}</span>
-                                                <span className="text-slate-500 dark:text-slate-400 ml-2">
+                                                <span className="font-medium text-foreground">{med.name}</span>
+                                                <span className="text-muted ml-2">
                                                     {med.dosage} — {med.frequency}
                                                 </span>
                                             </div>
@@ -97,7 +97,7 @@ export default function PatientPrescriptions() {
                             )}
 
                             {rx.instructions && (
-                                <p className="text-xs text-slate-600 dark:text-slate-400 bg-amber-50 dark:bg-amber-950/30 px-3 py-2 rounded-lg">
+                                <p className="text-xs text-muted bg-amber-50 dark:bg-amber-950/30 px-3 py-2 rounded-lg">
                                     💡 {rx.instructions}
                                 </p>
                             )}

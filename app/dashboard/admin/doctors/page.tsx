@@ -136,12 +136,12 @@ export default function AdminDoctors() {
     }
 
     const inputClasses =
-        "w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50";
+        "w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50";
 
     if (loading) {
         return (
             <div className="space-y-6 animate-fade-in">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                <h1 className="text-2xl font-bold text-foreground">
                     Doctors
                 </h1>
                 <TableSkeleton />
@@ -152,7 +152,7 @@ export default function AdminDoctors() {
     return (
         <div className="space-y-6 animate-fade-in">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                <h1 className="text-2xl font-bold text-foreground">
                     Manage Doctors
                 </h1>
                 <button
@@ -167,14 +167,14 @@ export default function AdminDoctors() {
                 {doctors.map((doc) => (
                     <div
                         key={doc.id}
-                        className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5"
+                        className="glass rounded-2xl border border-glass p-5"
                     >
                         <div className="flex items-start justify-between mb-3">
                             <div>
-                                <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                                <p className="text-sm font-semibold text-foreground">
                                     {doc.profiles?.full_name || "Unknown"}
                                 </p>
-                                <p className="text-xs text-slate-500 mt-0.5">
+                                <p className="text-xs text-muted mt-0.5">
                                     {doc.specialization}
                                 </p>
                             </div>
@@ -190,7 +190,7 @@ export default function AdminDoctors() {
                                 {doc.is_available ? "Available" : "Unavailable"}
                             </button>
                         </div>
-                        <div className="space-y-1 text-xs text-slate-600 dark:text-slate-400">
+                        <div className="space-y-1 text-xs text-muted">
                             <p>🏥 {doc.departments?.name || "No dept"}</p>
                             <p>🎓 {doc.qualification || "N/A"}</p>
                             <p>📅 {doc.experience_years}yr exp</p>
@@ -202,8 +202,8 @@ export default function AdminDoctors() {
             </div>
 
             {doctors.length === 0 && (
-                <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <p className="text-slate-400 text-sm">
+                <div className="text-center py-16 glass rounded-2xl border border-glass">
+                    <p className="text-muted text-sm">
                         No doctors yet. Create one using the button above.
                     </p>
                 </div>
@@ -227,7 +227,7 @@ export default function AdminDoctors() {
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Full Name *
                             </label>
                             <input
@@ -245,7 +245,7 @@ export default function AdminDoctors() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Email *
                             </label>
                             <input
@@ -263,7 +263,7 @@ export default function AdminDoctors() {
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Password *
                             </label>
                             <input
@@ -282,7 +282,7 @@ export default function AdminDoctors() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Phone
                             </label>
                             <input
@@ -298,7 +298,7 @@ export default function AdminDoctors() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                        <label className="block text-sm font-medium text-foreground mb-1">
                             Department
                         </label>
                         <select
@@ -322,7 +322,7 @@ export default function AdminDoctors() {
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Specialization
                             </label>
                             <input
@@ -339,7 +339,7 @@ export default function AdminDoctors() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Qualification
                             </label>
                             <input
@@ -359,7 +359,7 @@ export default function AdminDoctors() {
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Experience (years)
                             </label>
                             <input
@@ -377,7 +377,7 @@ export default function AdminDoctors() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Consultation Time
                             </label>
                             <input

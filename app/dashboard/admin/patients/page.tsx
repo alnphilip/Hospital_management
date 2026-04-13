@@ -58,8 +58,8 @@ export default function AdminPatients() {
             <div className="space-y-6 animate-fade-in">
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Patients</h1>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage hospital patients and OP numbers.</p>
+                        <h1 className="text-2xl font-bold text-foreground">Patients</h1>
+                        <p className="text-muted text-sm mt-1">Manage hospital patients and OP numbers.</p>
                     </div>
                 </div>
                 <TableSkeleton />
@@ -71,10 +71,10 @@ export default function AdminPatients() {
         <div className="space-y-6 animate-fade-in">
             <div className="flex sm:items-center justify-between flex-col sm:flex-row gap-4 mb-2">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
                         <Users className="text-blue-500" /> Patients Registry
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+                    <p className="text-muted text-sm mt-1">
                         View all registered patients and their OP numbers.
                     </p>
                 </div>
@@ -85,21 +85,21 @@ export default function AdminPatients() {
                         placeholder="Search by Name, OP Number..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                        className="w-full px-3 py-2 rounded-xl border border-glass glass text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                     />
                 </div>
             </div>
 
             {filteredPatients.length === 0 ? (
-                <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <Users className="mx-auto text-slate-300 dark:text-slate-600 mb-3" size={40} />
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">No patients found.</p>
+                <div className="text-center py-16 glass rounded-2xl border border-glass">
+                    <Users className="mx-auto text-slate-300 dark:text-muted mb-3" size={40} />
+                    <p className="text-muted text-sm">No patients found.</p>
                 </div>
             ) : (
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+                <div className="glass rounded-2xl border border-glass overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm whitespace-nowrap">
-                            <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400">
+                            <thead className="glass-panel text-muted">
                                 <tr>
                                     <th className="px-6 py-4 font-medium">Patient</th>
                                     <th className="px-6 py-4 font-medium">Contact</th>
@@ -116,7 +116,7 @@ export default function AdminPatients() {
                                                     {(patient.profiles?.full_name || "?")[0].toUpperCase()}
                                                 </div>
                                                 <div>
-                                                    <p className="font-semibold text-slate-900 dark:text-white">
+                                                    <p className="font-semibold text-foreground">
                                                         {patient.profiles?.full_name || "Unknown"}
                                                     </p>
                                                     <p className="text-xs font-bold text-blue-600 dark:text-blue-400 mt-0.5">
@@ -126,11 +126,11 @@ export default function AdminPatients() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <p className="text-slate-700 dark:text-slate-300">{patient.profiles?.phone || "—"}</p>
+                                            <p className="text-foreground">{patient.profiles?.phone || "—"}</p>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex gap-2 text-xs">
-                                                <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 capitalize">
+                                                <span className="px-2 py-1 rounded glass-panel text-slate-600 dark:text-slate-300 capitalize">
                                                     {patient.gender || "—"}
                                                 </span>
                                                 {patient.blood_group && (
@@ -139,14 +139,14 @@ export default function AdminPatients() {
                                                     </span>
                                                 )}
                                                 {patient.date_of_birth && (
-                                                    <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                                                    <span className="px-2 py-1 rounded glass-panel text-slate-600 dark:text-slate-300">
                                                         DOB: {new Date(patient.date_of_birth).toLocaleDateString()}
                                                     </span>
                                                 )}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <p className="text-slate-500 dark:text-slate-400 text-xs">
+                                            <p className="text-muted text-xs">
                                                 {new Date(patient.created_at).toLocaleDateString()}
                                             </p>
                                         </td>

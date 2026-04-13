@@ -29,38 +29,45 @@ export default function DashboardLayout({
     };
 
     return (
-        <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="flex h-screen bg-slate-100 dark:bg-[#040914] p-4 sm:p-6 gap-6 relative overflow-hidden">
+            {/* Ambient Background Glow */}
+            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
+            
             <Sidebar links={links} role={role} roleColor={roleColor} />
 
-            <div className="flex-1 flex flex-col min-w-0">
-                {/* Top Header */}
-                <header className="sticky top-0 z-20 h-16 flex items-center justify-between px-6 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
-                    <h2 className="text-lg font-semibold text-slate-900 dark:text-white capitalize">
+            <div className="flex-1 flex flex-col min-w-0 gap-6 z-10 relative h-full">
+                {/* Top Header - Immovable */}
+                <header className="flex items-center justify-between px-6 h-20 glass rounded-3xl shrink-0">
+                    <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-muted capitalize tracking-tight">
                         {role} Dashboard
                     </h2>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                         <ThemeToggle />
 
-                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800">
-                            <User size={16} className="text-slate-500 dark:text-slate-400" />
-                            <span className="text-sm text-slate-700 dark:text-slate-300 max-w-[120px] truncate">
+                        <div className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-2xl bg-surface/50 border border-glass shadow-sm">
+                            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                                {userName ? userName.charAt(0).toUpperCase() : role.charAt(0).toUpperCase()}
+                            </div>
+                            <span className="text-sm font-medium text-foreground max-w-[150px] truncate">
                                 {userName || role}
                             </span>
                         </div>
 
                         <button
                             onClick={handleSignOut}
-                            className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950 dark:hover:text-red-400 transition-all duration-200"
+                            className="flex items-center justify-center w-11 h-11 rounded-2xl text-muted hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/40 dark:hover:text-red-400 border border-transparent hover:border-red-500/20 transition-all duration-300"
                             aria-label="Sign out"
                         >
-                            <LogOut size={18} />
+                            <LogOut size={20} strokeWidth={2.5} />
                         </button>
                     </div>
                 </header>
 
-                {/* Main Content */}
-                <main className="flex-1 p-6">{children}</main>
+                {/* Main Content Pane - Scrollable Canvas */}
+                <main className="flex-1 p-6 bg-white dark:bg-[#0b1224]/80 backdrop-blur-sm rounded-[2rem] shadow-xl overflow-y-auto relative custom-scrollbar border border-slate-200/50 dark:border-slate-800/40">
+                    {children}
+                </main>
             </div>
         </div>
     );

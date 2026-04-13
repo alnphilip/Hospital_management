@@ -40,7 +40,7 @@ export default function AdminOverview() {
     if (loading) {
         return (
             <div className="space-y-6 animate-fade-in">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Admin Analytics</h1>
+                <h1 className="text-2xl font-bold text-foreground">Admin Analytics</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {[1, 2, 3, 4, 5, 6].map((i) => <CardSkeleton key={i} />)}
                 </div>
@@ -49,13 +49,13 @@ export default function AdminOverview() {
     }
 
     return (
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-8 animate-fade-in">
+            {/* Context/Subtitle */}
             <div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Admin Analytics ⚡</h1>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">System-wide overview of all operations.</p>
+                <p className="text-muted text-[15px] font-medium tracking-wide">System-wide overview of all operations.</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card label="Total Patients" value={stats.patients} icon={Users} color="#0ea5e9" />
                 <Card label="Doctors" value={stats.doctors} icon={Stethoscope} color="#14b8a6" />
                 <Card label="Staff" value={stats.staff} icon={UserCog} color="#ec4899" />

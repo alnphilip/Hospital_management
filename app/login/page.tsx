@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Activity, Mail, Lock, Loader2 } from "lucide-react";
+import { Activity, Mail, Lock, Loader2, User } from "lucide-react";
 import { signIn, getUserRole, getRolePath } from "@/lib/auth";
 import toast from "react-hot-toast";
 
@@ -12,6 +12,18 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [recentEmails, setRecentEmails] = useState<string[]>([]);
+
+    useEffect(() => {
+        const saved = localStorage.getItem("hospital_recent_emails");
+        if (saved) {
+            try {
+                setRecentEmails(JSON.parse(saved));
+            } catch (e) {
+                console.error("Failed to parse recent emails", e);
+            }
+        }
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,6 +36,10 @@ export default function LoginPage() {
             setLoading(false);
             return;
         }
+
+        // Save email to recent list
+        const updated = [email, ...recentEmails.filter(e => e !== email)].slice(0, 3);
+        localStorage.setItem("hospital_recent_emails", JSON.stringify(updated));
 
         const role = await getUserRole();
         if (role) {
@@ -78,6 +94,24 @@ export default function LoginPage() {
                                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition text-sm"
                                 />
                             </div>
+                            
+                            {/* Recent Email Suggestions */}
+                            {recentEmails.length > 0 && (
+                                <div className="mt-2.5 flex flex-wrap gap-2">
+                                    <span className="text-[10px] font-bold text-muted uppercase tracking-wider self-center mr-1 opacity-50">Recent:</span>
+                                    {recentEmails.map((e) => (
+                                        <button
+                                            key={e}
+                                            type="button"
+                                            onClick={() => setEmail(e)}
+                                            className="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5"
+                                        >
+                                            <User size={10} className="text-sky-500" />
+                                            {e}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         <div>

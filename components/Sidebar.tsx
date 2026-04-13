@@ -23,23 +23,23 @@ export default function Sidebar({ links, role, roleColor }: SidebarProps) {
 
     return (
         <aside
-            className={`${collapsed ? "w-[72px]" : "w-64"
-                } h-screen sticky top-0 flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-all duration-300 ease-in-out z-30`}
+            className={`${collapsed ? "w-[80px]" : "w-72"
+                } h-full flex flex-col glass rounded-[2rem] shadow-2xl transition-all duration-400 ease-spring z-30 overflow-hidden border border-glass`}
         >
-            {/* Logo / Brand */}
-            <div className="flex items-center gap-3 px-4 h-16 border-b border-slate-200 dark:border-slate-800">
+            {/* Logo / Brand - Glass Header effect */}
+            <div className="flex items-center gap-4 px-6 h-20 border-b border-glass bg-surface-elevated/20 shrink-0">
                 <div
-                    className={`w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0`}
-                    style={{ background: roleColor }}
+                    className={`w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-base shrink-0 shadow-lg`}
+                    style={{ background: `linear-gradient(135deg, ${roleColor}, ${roleColor}dd)` }}
                 >
                     {role.charAt(0).toUpperCase()}
                 </div>
                 {!collapsed && (
                     <div className="overflow-hidden">
-                        <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                        <p className="text-base font-bold text-foreground tracking-tight truncate">
                             Smart Hospital
                         </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted truncate opacity-80" style={{ color: roleColor }}>
                             {role} Portal
                         </p>
                     </div>
@@ -47,7 +47,7 @@ export default function Sidebar({ links, role, roleColor }: SidebarProps) {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+            <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto custom-scrollbar">
                 {links.map((link) => {
                     const isActive =
                         pathname === link.href ||
@@ -58,18 +58,26 @@ export default function Sidebar({ links, role, roleColor }: SidebarProps) {
                         <Link
                             key={link.href}
                             href={link.href}
-                            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${isActive
-                                ? "text-white shadow-lg"
-                                : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
+                            className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all duration-300 group relative overflow-hidden ${isActive
+                                ? "text-white shadow-xl hover:-translate-y-0.5"
+                                : "text-muted hover:bg-surface/50 hover:text-foreground hover:shadow-sm"
                                 }`}
-                            style={isActive ? { background: roleColor } : undefined}
                         >
+                            {/* Active Indicator Background */}
+                            {isActive && (
+                                <div 
+                                    className="absolute inset-0 opacity-100 z-0 transition-opacity"
+                                    style={{ background: `linear-gradient(135deg, ${roleColor}, ${roleColor}aa)` }} 
+                                />
+                            )}
+                            
                             <Icon
-                                size={20}
-                                className={`shrink-0 ${isActive ? "" : "group-hover:scale-110 transition-transform"
+                                size={22}
+                                strokeWidth={isActive ? 2.5 : 2}
+                                className={`shrink-0 z-10 transition-transform duration-300 ${isActive ? "" : "group-hover:scale-110"
                                     }`}
                             />
-                            {!collapsed && <span className="truncate">{link.label}</span>}
+                            {!collapsed && <span className="truncate z-10 text-[15px]">{link.label}</span>}
                         </Link>
                     );
                 })}
@@ -78,9 +86,9 @@ export default function Sidebar({ links, role, roleColor }: SidebarProps) {
             {/* Collapse Toggle */}
             <button
                 onClick={() => setCollapsed(!collapsed)}
-                className="flex items-center justify-center h-12 border-t border-slate-200 dark:border-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                className="flex items-center justify-center h-16 border-t border-glass bg-surface/30 hover:bg-surface/60 text-muted transition-colors shrink-0"
             >
-                {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+                {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
             </button>
         </aside>
     );

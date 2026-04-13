@@ -108,12 +108,12 @@ export default function AdminStaff() {
     }
 
     const inputClasses =
-        "w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50";
+        "w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50";
 
     if (loading) {
         return (
             <div className="space-y-6 animate-fade-in">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                <h1 className="text-2xl font-bold text-foreground">
                     Staff
                 </h1>
                 <TableSkeleton />
@@ -124,7 +124,7 @@ export default function AdminStaff() {
     return (
         <div className="space-y-6 animate-fade-in">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                <h1 className="text-2xl font-bold text-foreground">
                     Office Staff
                 </h1>
                 <button
@@ -136,8 +136,8 @@ export default function AdminStaff() {
             </div>
 
             {staff.length === 0 ? (
-                <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <p className="text-slate-400 text-sm">
+                <div className="text-center py-16 glass rounded-2xl border border-glass">
+                    <p className="text-muted text-sm">
                         No staff members yet. Create one using the button above.
                     </p>
                 </div>
@@ -146,7 +146,7 @@ export default function AdminStaff() {
                     {staff.map((s) => (
                         <div
                             key={s.id}
-                            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5"
+                            className="glass rounded-2xl border border-glass p-5"
                         >
                             <div className="flex items-center gap-3 mb-3">
                                 <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center text-purple-600 dark:text-purple-400 font-bold text-sm">
@@ -155,15 +155,15 @@ export default function AdminStaff() {
                                         ?.toUpperCase() || "S"}
                                 </div>
                                 <div>
-                                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                                    <p className="text-sm font-semibold text-foreground">
                                         {s.profiles?.full_name || "Unknown"}
                                     </p>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                    <p className="text-xs text-muted">
                                         {s.position || "Staff"}
                                     </p>
                                 </div>
                             </div>
-                            <div className="space-y-1 text-xs text-slate-600 dark:text-slate-400">
+                            <div className="space-y-1 text-xs text-muted">
                                 <p>
                                     🏥{" "}
                                     {s.departments?.name || "General Staff"}
@@ -202,7 +202,7 @@ export default function AdminStaff() {
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Full Name *
                             </label>
                             <input
@@ -220,7 +220,7 @@ export default function AdminStaff() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Email *
                             </label>
                             <input
@@ -238,7 +238,7 @@ export default function AdminStaff() {
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Password *
                             </label>
                             <input
@@ -257,7 +257,7 @@ export default function AdminStaff() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Phone
                             </label>
                             <input
@@ -273,7 +273,7 @@ export default function AdminStaff() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                        <label className="block text-sm font-medium text-foreground mb-1">
                             Department
                         </label>
                         <select
@@ -298,7 +298,7 @@ export default function AdminStaff() {
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Position
                             </label>
                             <input
@@ -315,7 +315,7 @@ export default function AdminStaff() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <label className="block text-sm font-medium text-foreground mb-1">
                                 Shift
                             </label>
                             <select

@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { TableSkeleton } from "@/components/ui/Skeleton";
-import { ShieldCheck, UserPlus, Clock } from "lucide-react";
+import { ShieldCheck, UserPlus, Clock, Activity, Building2, Users } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface Appointment {
@@ -207,7 +207,7 @@ export default function StaffAppointments() {
     if (loading) {
         return (
             <div className="space-y-6 animate-fade-in">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Appointments</h1>
+                <h1 className="text-2xl font-bold text-foreground">Appointments</h1>
                 <TableSkeleton />
             </div>
         );
@@ -215,11 +215,11 @@ export default function StaffAppointments() {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Manage Appointments</h1>
+            <h1 className="text-2xl font-bold text-foreground">Manage Appointments</h1>
 
             {appointments.length === 0 ? (
-                <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <p className="text-slate-400 text-sm">No appointments found.</p>
+                <div className="text-center py-16 glass rounded-2xl border border-glass">
+                    <p className="text-muted text-sm">No appointments found.</p>
                 </div>
             ) : (
                 <div className="space-y-3">
@@ -233,37 +233,68 @@ export default function StaffAppointments() {
                             : [];
 
                         return (
-                            <div key={apt.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4">
-                                <div className="flex items-start justify-between mb-3">
-                                    <div>
-                                        <p className="text-sm font-semibold text-slate-900 dark:text-white">{apt.reason || "General Consultation"}</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                            📅 {apt.appointment_date}
-                                            {apt.appointment_time && apt.appointment_time !== "00:00:00" ? (
-                                                <> &nbsp;⏰ {apt.appointment_time}</>
-                                            ) : (
-                                                <span className="ml-2 text-amber-500 dark:text-amber-400">⏳ No time set</span>
-                                            )}
-                                        </p>
-                                        {apt.patients?.profiles?.full_name && (
-                                            <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
-                                                👤 Patient: <span className="font-medium text-slate-900 dark:text-white">{apt.patients.profiles.full_name}</span>
-                                                {apt.patients.op_number ? <span className="ml-2 text-teal-600 dark:text-teal-400 font-semibold px-1.5 py-0.5 bg-teal-50 dark:bg-teal-900/40 rounded">({apt.patients.op_number})</span> : ""}
+                            <div key={apt.id} className="flex flex-col p-5 rounded-2xl bg-white dark:bg-[#0f172a] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-200 dark:border-slate-800/80 transition-all hover:scale-[1.01] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] mb-4">
+                                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-4">
+                                    <div className="flex flex-col gap-1.5 flex-w">
+                                        <div className="flex items-center gap-3">
+                                            <p className="text-base font-semibold text-foreground">
+                                                {apt.reason || "General Consultation"}
                                             </p>
-                                        )}
-                                        {apt.departments?.name && (
-                                            <p className="text-xs text-slate-400 mt-0.5">🏥 {apt.departments.name}</p>
+                                            <StatusBadge status={apt.status} />
+                                        </div>
+                                        
+                                        <div className="flex flex-wrap items-center gap-4 text-sm text-muted font-medium mt-1">
+                                            <div className="flex items-center gap-1.5 text-primary opacity-80 mt-1">
+                                                <Clock size={15} />
+                                                <span>
+                                                    {apt.appointment_date}
+                                                    {apt.appointment_time && apt.appointment_time !== "00:00:00" ? (
+                                                        <> at {apt.appointment_time}</>
+                                                    ) : (
+                                                        <span className="ml-1 text-amber-500 dark:text-amber-400">— Awaiting time slot</span>
+                                                    )}
+                                                </span>
+                                            </div>
+                                            
+                                            {apt.departments?.name && (
+                                                <div className="flex items-center gap-1.5 mt-1">
+                                                    <Building2 size={13} className="text-purple-500/80" />
+                                                    <span className="text-xs font-semibold tracking-wider uppercase text-muted">{apt.departments.name}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Right Side Entities */}
+                                    <div className="flex flex-col sm:items-end gap-2 shrink-0">
+                                        {apt.patients?.profiles?.full_name && (
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex flex-col items-end">
+                                                    <span className="text-sm font-medium text-foreground">{apt.patients.profiles.full_name}</span>
+                                                    {apt.patients.op_number && <span className="text-xs uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold">{apt.patients.op_number}</span>}
+                                                </div>
+                                                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 ml-1">
+                                                    <Users size={14} />
+                                                </div>
+                                            </div>
                                         )}
                                         {apt.doctors?.profiles?.full_name && (
-                                            <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">🩺 Dr. {apt.doctors.profiles.full_name} ({apt.doctors.specialization})</p>
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex flex-col items-end">
+                                                    <span className="text-sm font-medium text-muted">Dr. {apt.doctors.profiles.full_name}</span>
+                                                    <span className="text-[11px] uppercase tracking-wider text-muted font-semibold">{apt.doctors.specialization}</span>
+                                                </div>
+                                                <div className="w-8 h-8 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-500 ml-1">
+                                                    <Activity size={14} />
+                                                </div>
+                                            </div>
                                         )}
                                     </div>
-                                    <StatusBadge status={apt.status} />
                                 </div>
 
                                 {/* Pending — select doctor + slot, then verify & assign */}
                                 {apt.status === "pending" && (
-                                    <div className="space-y-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                                    <div className="space-y-2.5 pt-2 border-t border-glass">
                                         {/* Step 1: Select doctor */}
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <select
@@ -272,7 +303,7 @@ export default function StaffAppointments() {
                                                     setSelectedDoctor({ ...selectedDoctor, [apt.id]: e.target.value });
                                                     setSelectedSlot({ ...selectedSlot, [apt.id]: "" });
                                                 }}
-                                                className="flex-1 min-w-[200px] px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-white"
+                                                className="flex-1 min-w-[200px] px-2.5 py-1.5 rounded-lg border border-glass glass-panel text-sm text-foreground"
                                             >
                                                 <option value="">Select Doctor</option>
                                                 {deptDoctors.map((d) => (
@@ -287,14 +318,14 @@ export default function StaffAppointments() {
                                         {/* Step 2: Select time slot (only after doctor is chosen) */}
                                         {chosenDocId && (
                                             <div className="flex items-center gap-2 flex-wrap">
-                                                <Clock size={14} className="text-slate-400 shrink-0" />
+                                                <Clock size={14} className="text-muted shrink-0" />
                                                 {slots.length === 0 ? (
                                                     <p className="text-xs text-amber-500">No consultation time configured for this doctor.</p>
                                                 ) : (
                                                     <select
                                                         value={selectedSlot[apt.id] || ""}
                                                         onChange={(e) => setSelectedSlot({ ...selectedSlot, [apt.id]: e.target.value })}
-                                                        className="flex-1 min-w-[200px] px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-white"
+                                                        className="flex-1 min-w-[200px] px-2.5 py-1.5 rounded-lg border border-glass glass-panel text-sm text-foreground"
                                                     >
                                                         <option value="">Select Time Slot</option>
                                                         {slots.map((slot) => (
@@ -325,11 +356,11 @@ export default function StaffAppointments() {
 
                                 {/* Verified — assign doctor (legacy, already has time) */}
                                 {apt.status === "verified" && (
-                                    <div className="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                                    <div className="flex items-center gap-2 pt-2 border-t border-glass">
                                         <select
                                             value={selectedDoctor[apt.id] || ""}
                                             onChange={(e) => setSelectedDoctor({ ...selectedDoctor, [apt.id]: e.target.value })}
-                                            className="px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-white"
+                                            className="px-2 py-1.5 rounded-lg border border-glass glass-panel text-sm text-foreground"
                                         >
                                             <option value="">Select Doctor</option>
                                             {deptDoctors.map((d) => (

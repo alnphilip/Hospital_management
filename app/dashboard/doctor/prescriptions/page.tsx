@@ -116,7 +116,7 @@ export default function DoctorPrescriptions() {
     if (loading) {
         return (
             <div className="space-y-6 animate-fade-in">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Prescriptions</h1>
+                <h1 className="text-2xl font-bold text-foreground">Prescriptions</h1>
                 <TableSkeleton />
             </div>
         );
@@ -125,35 +125,35 @@ export default function DoctorPrescriptions() {
     return (
         <div className="space-y-6 animate-fade-in">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Prescriptions</h1>
+                <h1 className="text-2xl font-bold text-foreground">Prescriptions</h1>
                 <button onClick={() => { resetForm(); setShowModal(true); }} className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl hover:from-teal-600 hover:to-emerald-600 shadow-lg shadow-teal-500/25 transition-all">
                     <Plus size={16} /> New Prescription
                 </button>
             </div>
 
             {prescriptions.length === 0 ? (
-                <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <p className="text-slate-400 text-sm">No prescriptions yet.</p>
+                <div className="text-center py-16 glass rounded-2xl border border-glass">
+                    <p className="text-muted text-sm">No prescriptions yet.</p>
                 </div>
             ) : (
                 <div className="space-y-4">
                     {prescriptions.map((rx) => (
-                        <div key={rx.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5">
+                        <div key={rx.id} className="glass rounded-2xl border border-glass p-5">
                             <div className="flex items-start justify-between mb-1">
-                                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{rx.diagnosis || "Prescription"}</h3>
+                                <h3 className="text-sm font-semibold text-foreground">{rx.diagnosis || "Prescription"}</h3>
                                 {rx.patients?.profiles?.full_name && (
                                     <span className="text-xs text-teal-600 dark:text-teal-400 font-medium">👤 {rx.patients.profiles.full_name}</span>
                                 )}
                             </div>
-                            <p className="text-xs text-slate-500 mt-0.5">{new Date(rx.created_at).toLocaleDateString()}</p>
+                            <p className="text-xs text-muted mt-0.5">{new Date(rx.created_at).toLocaleDateString()}</p>
                             {rx.medications?.length > 0 && (
                                 <div className="mt-3 space-y-1">
                                     {rx.medications.map((m, i) => (
-                                        <p key={i} className="text-sm text-slate-600 dark:text-slate-400">💊 {m.name} — {m.dosage} ({m.frequency})</p>
+                                        <p key={i} className="text-sm text-muted">💊 {m.name} — {m.dosage} ({m.frequency})</p>
                                     ))}
                                 </div>
                             )}
-                            {rx.instructions && <p className="text-xs text-slate-400 mt-2">📝 {rx.instructions}</p>}
+                            {rx.instructions && <p className="text-xs text-muted mt-2">📝 {rx.instructions}</p>}
                         </div>
                     ))}
                 </div>
@@ -162,8 +162,8 @@ export default function DoctorPrescriptions() {
             <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="New Prescription" size="lg">
                 <form onSubmit={handleCreate} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Appointment</label>
-                        <select value={appointmentId} onChange={(e) => setAppointmentId(e.target.value)} required className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50">
+                        <label className="block text-sm font-medium text-foreground mb-1">Appointment</label>
+                        <select value={appointmentId} onChange={(e) => setAppointmentId(e.target.value)} required className="w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50">
                             <option value="">Select</option>
                             {appointments.map((a) => (
                                 <option key={a.id} value={a.id}>
@@ -173,14 +173,14 @@ export default function DoctorPrescriptions() {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Diagnosis</label>
-                        <input type="text" value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} placeholder="e.g. Acute bronchitis" className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
+                        <label className="block text-sm font-medium text-foreground mb-1">Diagnosis</label>
+                        <input type="text" value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} placeholder="e.g. Acute bronchitis" className="w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
                     </div>
 
                     {/* Medications — Multi-row */}
                     <div>
                         <div className="flex items-center justify-between mb-2">
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Medications</label>
+                            <label className="block text-sm font-medium text-foreground">Medications</label>
                             <button
                                 type="button"
                                 onClick={addMedication}
@@ -193,9 +193,9 @@ export default function DoctorPrescriptions() {
                             {medications.map((med, index) => (
                                 <div key={index} className="flex items-center gap-2">
                                     <div className="grid grid-cols-3 gap-2 flex-1">
-                                        <input type="text" placeholder="Medicine name" value={med.name} onChange={(e) => updateMedication(index, "name", e.target.value)} className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
-                                        <input type="text" placeholder="Dosage" value={med.dosage} onChange={(e) => updateMedication(index, "dosage", e.target.value)} className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
-                                        <input type="text" placeholder="Frequency" value={med.frequency} onChange={(e) => updateMedication(index, "frequency", e.target.value)} className="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
+                                        <input type="text" placeholder="Medicine name" value={med.name} onChange={(e) => updateMedication(index, "name", e.target.value)} className="px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
+                                        <input type="text" placeholder="Dosage" value={med.dosage} onChange={(e) => updateMedication(index, "dosage", e.target.value)} className="px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
+                                        <input type="text" placeholder="Frequency" value={med.frequency} onChange={(e) => updateMedication(index, "frequency", e.target.value)} className="px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
                                     </div>
                                     {medications.length > 1 && (
                                         <button
@@ -213,8 +213,8 @@ export default function DoctorPrescriptions() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Instructions</label>
-                        <textarea value={instructions} onChange={(e) => setInstructions(e.target.value)} rows={2} placeholder="Additional instructions..." className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm resize-none focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
+                        <label className="block text-sm font-medium text-foreground mb-1">Instructions</label>
+                        <textarea value={instructions} onChange={(e) => setInstructions(e.target.value)} rows={2} placeholder="Additional instructions..." className="w-full px-3 py-2.5 rounded-xl border border-glass glass-panel text-foreground text-sm resize-none focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
                     </div>
                     <button type="submit" disabled={submitting} className="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 shadow-lg shadow-teal-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-60">
                         {submitting ? <><Loader2 size={16} className="animate-spin" /> Creating...</> : "Create Prescription"}
