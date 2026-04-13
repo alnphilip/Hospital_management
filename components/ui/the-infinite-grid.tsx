@@ -12,12 +12,14 @@ import {
 
 export const Component = () => {
   const [count, setCount] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
   useEffect(() => {
+    setMounted(true);
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (containerRef.current) {
         const { left, top } = containerRef.current.getBoundingClientRect();
@@ -45,6 +47,8 @@ export const Component = () => {
 
   const maskImage = useMotionTemplate`radial-gradient(300px circle at ${mouseX}px ${mouseY}px, black, transparent)`;
 
+  if (!mounted) return <div className="w-full h-full bg-transparent" />;
+
   return (
     <div
       ref={containerRef}
@@ -52,7 +56,7 @@ export const Component = () => {
         "relative w-full h-full flex flex-col items-center justify-center overflow-hidden bg-transparent"
       )}
     >
-      <div className="absolute inset-0 z-0 opacity-10">
+      <div className="absolute inset-0 z-0 opacity-40 dark:opacity-60">
         <GridPattern offsetX={gridOffsetX} offsetY={gridOffsetY} id="bg-grid" />
       </div>
       <motion.div 
@@ -117,7 +121,7 @@ const GridPattern = ({ offsetX, offsetY, id }: { offsetX: any, offsetY: any, id:
             fill="none"
             stroke="currentColor"
             strokeWidth="1"
-            className="text-slate-500" 
+            className="text-foreground/50 dark:text-foreground/60" 
           />
         </motion.pattern>
       </defs>

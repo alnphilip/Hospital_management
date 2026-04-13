@@ -36,16 +36,16 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
     };
 
     return createPortal(
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none p-4">
+        <div className="fixed inset-0 z-[1000] flex items-end sm:items-center justify-center pointer-events-none p-0 sm:p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-white/40 backdrop-blur-[10px] pointer-events-auto"
+                className="absolute inset-0 bg-background/60 dark:bg-black/60 backdrop-blur-md pointer-events-auto"
                 onClick={onClose}
             />
 
             {/* Modal Container */}
             <div
-                className={`relative z-[1001] w-full ${sizeClasses[size]} pointer-events-auto mx-auto bg-white/95 dark:bg-[#0b1224]/95 backdrop-blur-2xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20 dark:border-slate-800/80 overflow-hidden animate-in fade-in zoom-in-95 duration-200`}
+                className={`relative z-[1001] w-full ${sizeClasses[size]} pointer-events-auto mx-auto bg-surface/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl border border-white/20 dark:border-white/10 overflow-hidden animate-in fade-in slide-in-from-bottom-10 sm:zoom-in-95 duration-300`}
             >
                 {/* Header */}
                 <div className="flex items-center justify-between px-8 py-6 border-b border-slate-100/50 dark:border-slate-800/50">

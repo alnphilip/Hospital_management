@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Activity, Mail, Lock, Loader2, User } from "lucide-react";
 import { signIn, getUserRole, getRolePath } from "@/lib/auth";
+import { Component as InfiniteGrid } from "@/components/ui/the-infinite-grid";
 import toast from "react-hot-toast";
 
 export default function LoginPage() {
@@ -52,47 +53,55 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-sky-50 to-teal-50 dark:from-slate-950 dark:via-sky-950/30 dark:to-teal-950/20 px-4">
-            <div className="w-full max-w-md">
+        <div className="min-h-screen flex items-center justify-center bg-background text-foreground relative overflow-hidden px-4">
+            {/* Background Shader */}
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-100">
+                <InfiniteGrid />
+            </div>
+            {/* Ambient Background Glows */}
+            <div className="absolute top-[-10%] left-[-10%] w-[60%] md:w-[40%] h-[40%] bg-sky-300/40 dark:bg-sky-600/30 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] md:w-[30%] h-[30%] bg-teal-300/40 dark:bg-teal-600/30 blur-[120px] rounded-full pointer-events-none" />
+
+            <div className="w-full max-w-md relative z-10">
                 {/* Logo */}
-                <div className="flex items-center justify-center gap-2 mb-8">
-                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-500 to-teal-500 flex items-center justify-center">
-                        <Activity className="text-white" size={24} />
+                <div className="flex items-center justify-center gap-3 mb-12 animate-fade-in">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-500 to-teal-500 flex items-center justify-center shadow-lg shadow-sky-500/20">
+                        <Activity className="text-white" size={24} strokeWidth={2.5} />
                     </div>
-                    <span className="text-xl font-bold text-slate-900 dark:text-white">
+                    <span className="text-2xl font-black tracking-tight text-foreground">
                         SmartHospital
                     </span>
                 </div>
 
                 {/* Card */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 p-8">
-                    <div className="text-center mb-6">
-                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-                            Welcome back
+                <div className="glass-panel rounded-[2rem] p-8 md:p-10 shadow-2xl animate-fade-in">
+                    <div className="text-center mb-10">
+                        <h1 className="text-3xl font-black text-foreground tracking-tight">
+                            Welcome Back
                         </h1>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                            Sign in to access your dashboard
+                        <p className="text-muted font-semibold mt-2">
+                            Access your medical portal
                         </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                                Email
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-foreground/80 ml-1">
+                                Email Address
                             </label>
-                            <div className="relative">
+                            <div className="relative group">
                                 <Mail
-                                    size={16}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                                    size={18}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary transition-colors"
                                 />
                                 <input
                                     type="email"
                                     list="recent-emails"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="you@example.com"
+                                    placeholder="name@hospital.com"
                                     required
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition text-sm"
+                                    className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/10 bg-white/5 dark:bg-black/20 text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
                                 />
                                 <datalist id="recent-emails">
                                     {recentEmails.map((e) => (
@@ -100,17 +109,21 @@ export default function LoginPage() {
                                     ))}
                                 </datalist>
                             </div>
-                            
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                                Password
-                            </label>
-                            <div className="relative">
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between ml-1">
+                                <label className="text-sm font-bold text-foreground/80">
+                                    Password
+                                </label>
+                                <Link href="#" className="text-xs font-bold text-primary hover:underline">
+                                    Forgot?
+                                </Link>
+                            </div>
+                            <div className="relative group">
                                 <Lock
-                                    size={16}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                                    size={18}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary transition-colors"
                                 />
                                 <input
                                     type="password"
@@ -118,7 +131,7 @@ export default function LoginPage() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
                                     required
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition text-sm"
+                                    className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/10 bg-white/5 dark:bg-black/20 text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
                                 />
                             </div>
                         </div>
@@ -126,27 +139,27 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-teal-500 hover:from-sky-600 hover:to-teal-600 shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="w-full py-4 rounded-2xl text-base font-bold text-white bg-gradient-to-r from-sky-600 to-teal-600 hover:scale-[1.02] shadow-xl shadow-sky-600/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 mt-4"
                         >
                             {loading ? (
                                 <>
-                                    <Loader2 size={16} className="animate-spin" />
-                                    Signing in...
+                                    <Loader2 size={20} className="animate-spin" />
+                                    Authenticating...
                                 </>
                             ) : (
-                                "Sign In"
+                                "Sign In to Dashboard"
                             )}
                         </button>
                     </form>
                 </div>
 
-                <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
-                    Don&apos;t have an account?{" "}
+                <p className="text-center text-sm font-bold text-muted mt-10">
+                    New to the system?{" "}
                     <Link
                         href="/register"
-                        className="font-semibold text-sky-600 dark:text-sky-400 hover:underline"
+                        className="text-primary hover:underline ml-1"
                     >
-                        Create one
+                        Create an account
                     </Link>
                 </p>
             </div>

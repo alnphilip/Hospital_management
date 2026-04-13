@@ -90,7 +90,7 @@ export default function StaffOverview() {
                 ) : (
                     <div className="flex flex-col gap-4">
                         {recentAppointments.map((apt) => (
-                            <div key={apt.id} className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between p-5 rounded-2xl bg-white dark:bg-[#0f172a] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-200 dark:border-slate-800/80 transition-all hover:scale-[1.01] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)]">
+                            <div key={apt.id} className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between p-6 rounded-[2rem] glass-panel border border-white/10 transition-all hover:scale-[1.01] hover:shadow-2xl">
                                 {/* Left: Subject & Status */}
                                 <div className="flex flex-col gap-1.5 flex-w">
                                     <div className="flex items-center gap-3">

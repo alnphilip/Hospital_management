@@ -17,6 +17,21 @@
   --surface-panel: rgba(255, 255, 255, 0.4);
   --border-glass: rgba(255, 255, 255, 0.8);
   --glass-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.1);
+  --selection: rgba(14, 165, 233, 0.15);
+}
+
+.dark {
+  /* Dark Mode - "Deep Ether" */
+  --background: #020617;
+  --foreground: #f8fafc;
+  --muted: #94a3b8;
+
+  /* Surfaces */
+  --surface: rgba(30, 41, 59, 0.6);
+  --surface-panel: rgba(30, 41, 59, 0.4);
+  --border-glass: rgba(148, 163, 184, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  --selection: rgba(14, 165, 233, 0.25);
 }
 
 @theme inline {

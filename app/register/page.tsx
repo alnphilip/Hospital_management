@@ -17,6 +17,7 @@ import {
     AlertTriangle,
 } from "lucide-react";
 import { signUp, getRolePath } from "@/lib/auth";
+import { Component as InfiniteGrid } from "@/components/ui/the-infinite-grid";
 import toast from "react-hot-toast";
 
 export default function RegisterPage() {
@@ -90,219 +91,195 @@ export default function RegisterPage() {
         "w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition text-sm";
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-sky-50 to-teal-50 dark:from-slate-950 dark:via-sky-950/30 dark:to-teal-950/20 px-4 py-8">
-            <div className="w-full max-w-md">
+        <div className="min-h-screen flex items-center justify-center bg-background text-foreground relative overflow-hidden px-4 py-12">
+            {/* Background Shader */}
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-100">
+                <InfiniteGrid />
+            </div>
+            {/* Ambient Background Glows */}
+            <div className="absolute top-[-5%] right-[-10%] w-[60%] h-[60%] bg-sky-300/40 dark:bg-sky-600/30 blur-[130px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-[-10%] left-[-5%] w-[50%] h-[50%] bg-teal-300/40 dark:bg-teal-600/30 blur-[130px] rounded-full pointer-events-none" />
+
+            <div className="w-full max-w-2xl relative z-10">
                 {/* Logo */}
-                <div className="flex items-center justify-center gap-2 mb-8">
-                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-500 to-teal-500 flex items-center justify-center">
-                        <Activity className="text-white" size={24} />
+                <div className="flex items-center justify-center gap-3 mb-10 animate-fade-in">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-500 to-teal-500 flex items-center justify-center shadow-lg shadow-sky-500/20">
+                        <Activity className="text-white" size={24} strokeWidth={2.5} />
                     </div>
-                    <span className="text-xl font-bold text-slate-900 dark:text-white">
+                    <span className="text-2xl font-black tracking-tight text-foreground">
                         SmartHospital
                     </span>
                 </div>
 
                 {/* Card */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 p-8">
-                    <div className="text-center mb-6">
-                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                <div className="glass-panel rounded-[2.5rem] p-8 md:p-12 shadow-2xl animate-fade-in">
+                    <div className="text-center mb-10">
+                        <h1 className="text-3xl font-black text-foreground tracking-tight">
                             Patient Registration
                         </h1>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                            Create your patient account to book appointments
+                        <p className="text-muted font-semibold mt-2">
+                            Join our modern healthcare network
                         </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                                Full Name
-                            </label>
-                            <div className="relative">
-                                <User
-                                    size={16}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                                />
-                                <input
-                                    type="text"
-                                    value={fullName}
-                                    onChange={(e) => setFullName(e.target.value)}
-                                    placeholder="John Smith"
-                                    required
-                                    className={inputClasses}
-                                />
+                    <form onSubmit={handleSubmit} className="space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-foreground/80 ml-1">
+                                    Full Name
+                                </label>
+                                <div className="relative group">
+                                    <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary transition-colors" />
+                                    <input
+                                        type="text"
+                                        value={fullName}
+                                        onChange={(e) => setFullName(e.target.value)}
+                                        placeholder="John Smith"
+                                        required
+                                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/10 bg-white/5 dark:bg-black/20 text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                                Email
-                            </label>
-                            <div className="relative">
-                                <Mail
-                                    size={16}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                                />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="you@example.com"
-                                    required
-                                    className={inputClasses}
-                                />
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-foreground/80 ml-1">
+                                    Email Address
+                                </label>
+                                <div className="relative group">
+                                    <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary transition-colors" />
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="name@example.com"
+                                        required
+                                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/10 bg-white/5 dark:bg-black/20 text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                                Phone
-                            </label>
-                            <div className="relative">
-                                <Phone
-                                    size={16}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                                />
-                                <input
-                                    type="tel"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    placeholder="+91 98765 43210"
-                                    className={inputClasses}
-                                />
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-foreground/80 ml-1">
+                                    Phone Number
+                                </label>
+                                <div className="relative group">
+                                    <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary transition-colors" />
+                                    <input
+                                        type="tel"
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value)}
+                                        placeholder="+91 98765 43210"
+                                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/10 bg-white/5 dark:bg-black/20 text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                                Password
-                            </label>
-                            <div className="relative">
-                                <Lock
-                                    size={16}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                                />
-                                <input
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                    required
-                                    minLength={6}
-                                    className={inputClasses}
-                                />
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-foreground/80 ml-1">
+                                    Security Password
+                                </label>
+                                <div className="relative group">
+                                    <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary transition-colors" />
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="••••••••"
+                                        required
+                                        minLength={6}
+                                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/10 bg-white/5 dark:bg-black/20 text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
+                                    />
+                                </div>
                             </div>
                         </div>
 
                         {/* Patient Profile Details */}
-                        <div className="space-y-4 pt-2 border-t border-slate-200 dark:border-slate-700">
-                            <p className="text-sm font-semibold text-sky-600 dark:text-sky-400 flex items-center gap-1.5">
-                                <Heart size={14} />
-                                Patient Profile Details
-                            </p>
+                        <div className="pt-8 border-t border-white/10">
+                            <div className="flex items-center gap-2 mb-6">
+                                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                    <Heart size={16} className="text-primary" />
+                                </div>
+                                <h3 className="text-lg font-black text-foreground tracking-tight">Clinical Details</h3>
+                            </div>
 
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-foreground/80 ml-1">
                                         Date of Birth
                                     </label>
-                                    <div className="relative">
-                                        <Calendar
-                                            size={16}
-                                            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                                        />
+                                    <div className="relative group">
+                                        <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary transition-colors pointer-events-none" />
                                         <input
                                             type="date"
                                             value={dateOfBirth}
-                                            onChange={(e) =>
-                                                setDateOfBirth(e.target.value)
-                                            }
-                                            className={inputClasses}
+                                            onChange={(e) => setDateOfBirth(e.target.value)}
+                                            className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/10 bg-white/5 dark:bg-black/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
                                         />
                                     </div>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                        Gender
+
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-foreground/80 ml-1">
+                                        Biological Gender
                                     </label>
                                     <select
                                         value={gender}
-                                        onChange={(e) =>
-                                            setGender(e.target.value)
-                                        }
-                                        className={simpleInputClasses}
+                                        onChange={(e) => setGender(e.target.value)}
+                                        className="w-full px-4 py-4 rounded-2xl border border-white/10 bg-white/5 dark:bg-black/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium appearance-none"
                                     >
-                                        <option value="">Select</option>
+                                        <option value="">Select Gender</option>
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
                                         <option value="other">Other</option>
                                     </select>
                                 </div>
-                            </div>
 
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-foreground/80 ml-1">
                                         Blood Group
                                     </label>
-                                    <div className="relative">
-                                        <Droplets
-                                            size={16}
-                                            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                                        />
+                                    <div className="relative group">
+                                        <Droplets size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary transition-colors" />
                                         <input
                                             type="text"
                                             value={bloodGroup}
-                                            onChange={(e) =>
-                                                setBloodGroup(e.target.value)
-                                            }
+                                            onChange={(e) => setBloodGroup(e.target.value)}
                                             placeholder="e.g. O+"
-                                            className={inputClasses}
+                                            className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/10 bg-white/5 dark:bg-black/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
                                         />
                                     </div>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-foreground/80 ml-1">
                                         Emergency Contact
                                     </label>
-                                    <div className="relative">
-                                        <AlertTriangle
-                                            size={16}
-                                            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                                        />
+                                    <div className="relative group">
+                                        <AlertTriangle size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary transition-colors" />
                                         <input
                                             type="text"
                                             value={emergencyContact}
-                                            onChange={(e) =>
-                                                setEmergencyContact(
-                                                    e.target.value
-                                                )
-                                            }
+                                            onChange={(e) => setEmergencyContact(e.target.value)}
                                             placeholder="+91 98765 43210"
-                                            className={inputClasses}
+                                            className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/10 bg-white/5 dark:bg-black/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
                                         />
                                     </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                    Address
-                                </label>
-                                <div className="relative">
-                                    <MapPin
-                                        size={16}
-                                        className="absolute left-3 top-3 text-slate-400"
-                                    />
-                                    <textarea
-                                        value={address}
-                                        onChange={(e) =>
-                                            setAddress(e.target.value)
-                                        }
-                                        placeholder="Enter your address"
-                                        rows={2}
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition text-sm resize-none"
-                                    />
+                                <div className="col-span-1 md:col-span-2 space-y-2">
+                                    <label className="text-sm font-bold text-foreground/80 ml-1">
+                                        Residential Address
+                                    </label>
+                                    <div className="relative group">
+                                        <MapPin size={18} className="absolute left-4 top-4 text-muted group-focus-within:text-primary transition-colors" />
+                                        <textarea
+                                            value={address}
+                                            onChange={(e) => setAddress(e.target.value)}
+                                            placeholder="Complete street address, city, state"
+                                            rows={2}
+                                            className="w-full pl-12 pr-4 py-4 rounded-2xl border border-white/10 bg-white/5 dark:bg-black/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium resize-none"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -310,30 +287,27 @@ export default function RegisterPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-teal-500 hover:from-sky-600 hover:to-teal-600 shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="w-full py-5 rounded-2xl text-lg font-bold text-white bg-gradient-to-r from-sky-600 to-teal-600 hover:scale-[1.01] shadow-xl shadow-sky-600/20 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 mt-4"
                         >
                             {loading ? (
                                 <>
-                                    <Loader2
-                                        size={16}
-                                        className="animate-spin"
-                                    />
-                                    Creating account...
+                                    <Loader2 size={24} className="animate-spin" />
+                                    Creating Record...
                                 </>
                             ) : (
-                                "Create Patient Account"
+                                "Complete Registration"
                             )}
                         </button>
                     </form>
                 </div>
 
-                <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
-                    Already have an account?{" "}
+                <p className="text-center text-sm font-bold text-muted mt-10">
+                    Already have a medical account?{" "}
                     <Link
                         href="/login"
-                        className="font-semibold text-sky-600 dark:text-sky-400 hover:underline"
+                        className="text-primary hover:underline ml-1"
                     >
-                        Sign in
+                        Sign in instead
                     </Link>
                 </p>
             </div>

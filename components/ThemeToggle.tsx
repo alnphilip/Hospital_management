@@ -1,40 +1,38 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 
 export default function ThemeToggle() {
-    const [dark, setDark] = useState(false);
+    const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        const saved = localStorage.getItem("theme");
-        if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-            setDark(true);
-            document.documentElement.classList.add("dark");
-        }
-    }, []);
+    useEffect(() => setMounted(true), []);
 
-    const toggle = () => {
-        setDark((prev) => {
-            const next = !prev;
-            if (next) {
-                document.documentElement.classList.add("dark");
-                localStorage.setItem("theme", "dark");
-            } else {
-                document.documentElement.classList.remove("dark");
-                localStorage.setItem("theme", "light");
-            }
-            return next;
-        });
-    };
+    if (!mounted) {
+        return <div className="w-11 h-11 rounded-2xl glass-panel animate-pulse opacity-50" />;
+    }
 
     return (
         <button
-            onClick={toggle}
-            className="flex items-center justify-center w-10 h-10 rounded-xl glass-panel text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-200"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="flex items-center justify-center w-11 h-11 rounded-2xl glass-panel text-muted hover:text-foreground hover:bg-surface/60 transition-all duration-300 border border-transparent hover:border-glass overflow-hidden group relative"
             aria-label="Toggle theme"
         >
-            {dark ? <Sun size={18} /> : <Moon size={18} />}
+            <div className="relative w-5 h-5">
+                <Sun 
+                    size={20} 
+                    className="absolute inset-0 transition-all duration-500 rotate-0 scale-100 dark:-rotate-90 dark:scale-0 text-amber-500" 
+                />
+                <Moon 
+                    size={20} 
+                    className="absolute inset-0 transition-all duration-500 rotate-90 scale-0 dark:rotate-0 dark:scale-100 text-sky-400" 
+                />
+            </div>
+            
+            {/* Subtle highlight effect */}
+            <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
         </button>
     );
 }
