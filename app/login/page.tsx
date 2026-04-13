@@ -87,31 +87,20 @@ export default function LoginPage() {
                                 />
                                 <input
                                     type="email"
+                                    list="recent-emails"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="you@example.com"
                                     required
                                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition text-sm"
                                 />
+                                <datalist id="recent-emails">
+                                    {recentEmails.map((e) => (
+                                        <option key={e} value={e} />
+                                    ))}
+                                </datalist>
                             </div>
                             
-                            {/* Recent Email Suggestions */}
-                            {recentEmails.length > 0 && (
-                                <div className="mt-2.5 flex flex-wrap gap-2">
-                                    <span className="text-[10px] font-bold text-muted uppercase tracking-wider self-center mr-1 opacity-50">Recent:</span>
-                                    {recentEmails.map((e) => (
-                                        <button
-                                            key={e}
-                                            type="button"
-                                            onClick={() => setEmail(e)}
-                                            className="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5"
-                                        >
-                                            <User size={10} className="text-sky-500" />
-                                            {e}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
                         </div>
 
                         <div>

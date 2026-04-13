@@ -4,32 +4,19 @@
 
 :root {
   /* Light Mode - "Frosted Ice" */
-  --background: #f1f5f9;
+  --background: #f8fafc;
   --foreground: #0f172a;
   --muted: #64748b;
   
   /* Primary accents */
-  --primary: #ef4444;       /* Base accent for Admin, overridden locally but good default */
-  --primary-dark: #b91c1c;
+  --primary: #0ea5e9;
+  --primary-dark: #0284c7;
 
   /* Surfaces */
-  --surface: rgba(255, 255, 255, 0.85);
-  --surface-panel: rgba(255, 255, 255, 0.5);
-  --border-glass: rgba(255, 255, 255, 0.6);
-  --glass-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.15);
-}
-
-.dark {
-  /* Dark Mode - "Ethereal Surgeon" */
-  --background: #060e20;
-  --foreground: #dee5ff;
-  --muted: #94a3b8;
-
-  /* Surfaces */
-  --surface: rgba(15, 25, 48, 0.6);
-  --surface-panel: rgba(15, 25, 48, 0.4);
-  --border-glass: rgba(64, 72, 93, 0.3);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  --surface: rgba(255, 255, 255, 0.6);
+  --surface-panel: rgba(255, 255, 255, 0.4);
+  --border-glass: rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.1);
 }
 
 @theme inline {
@@ -38,15 +25,28 @@
   --color-muted: var(--muted);
   --color-primary: var(--primary);
   --color-primary-dark: var(--primary-dark);
-  
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+  font-family: sans-serif;
+}
+
+/* Ethereal Utility Classes */
+.glass {
+  background: var(--surface);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-panel {
+  background: var(--surface-panel);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
 }
 
 /* Base transitions */
@@ -73,10 +73,6 @@ body {
   border-radius: 3px;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-}
-
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
@@ -87,30 +83,15 @@ body {
   animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Ethereal Utility Classes (Used globally by our script) */
-.glass {
-  background: var(--surface);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--border-glass);
-  box-shadow: var(--glass-shadow);
-}
-
-.glass-panel {
-  background: var(--surface-panel);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-glass);
-}
-
-.border-glass {
-  border-color: var(--border-glass);
-}
-
-/* Gradient text */
+/* Gradient text utility */
 .gradient-text {
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Hide the datalist arrow */
+input[list]::-webkit-calendar-picker-indicator {
+  display: none !important;
 }

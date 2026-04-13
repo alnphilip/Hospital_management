@@ -118,31 +118,42 @@ export default function StaffAppointments() {
         setLoading(false);
     }
 
-    // Get taken slots for a specific doctor on a specific date
-    function getTakenSlots(doctorId: string, date: string): Set<string> {
+    // Get taken slots for a specific doctor on a specific date, including those currently selected in the UI
+    function getTakenSlots(doctorId: string, date: string, currentAptId: string): Set<string> {
         const taken = new Set<string>();
+        
+        // 1. Check already saved appointments
         for (const apt of appointments) {
             if (
                 apt.doctor_id === doctorId &&
                 apt.appointment_date === date &&
                 apt.appointment_time &&
                 apt.appointment_time !== "00:00:00" &&
-                !["cancelled"].includes(apt.status)
+                !["cancelled"].includes(apt.status) &&
+                apt.id !== currentAptId // Don't count itself if it's already assigned
             ) {
                 // Normalize to HH:MM
                 taken.add(apt.appointment_time.slice(0, 5));
             }
         }
+
+        // 2. Check slots currently selected in the UI for OTHER pending appointments
+        Object.entries(selectedSlot).forEach(([aptId, slotValue]) => {
+            if (aptId !== currentAptId && selectedDoctor[aptId] === doctorId && slotValue) {
+                taken.add(slotValue);
+            }
+        });
+
         return taken;
     }
 
     // Generate slots for a doctor with availability info
-    function getSlotsForDoctor(doctorId: string, date: string) {
+    function getSlotsForDoctor(doctorId: string, date: string, currentAptId: string) {
         const doctor = doctors.find((d) => d.id === doctorId);
         if (!doctor) return [];
 
         const allSlots = generateSlots(doctor.consultation_time);
-        const takenSlots = getTakenSlots(doctorId, date);
+        const takenSlots = getTakenSlots(doctorId, date, currentAptId);
 
         return allSlots.map((slot) => ({
             ...slot,
@@ -229,7 +240,7 @@ export default function StaffAppointments() {
                         );
                         const chosenDocId = selectedDoctor[apt.id] || "";
                         const slots = chosenDocId
-                            ? getSlotsForDoctor(chosenDocId, apt.appointment_date)
+                            ? getSlotsForDoctor(chosenDocId, apt.appointment_date, apt.id)
                             : [];
 
                         return (
@@ -300,8 +311,18 @@ export default function StaffAppointments() {
                                             <select
                                                 value={chosenDocId}
                                                 onChange={(e) => {
-                                                    setSelectedDoctor({ ...selectedDoctor, [apt.id]: e.target.value });
-                                                    setSelectedSlot({ ...selectedSlot, [apt.id]: "" });
+                                                    const docId = e.target.value;
+                                                    const updatedDocs = { ...selectedDoctor, [apt.id]: docId };
+                                                    setSelectedDoctor(updatedDocs);
+                                                    
+                                                    if (docId) {
+                                                        // Auto-select the first available slot
+                                                        const docSlots = getSlotsForDoctor(docId, apt.appointment_date, apt.id);
+                                                        const firstAvailable = docSlots.find(s => !s.taken);
+                                                        setSelectedSlot(prev => ({ ...prev, [apt.id]: firstAvailable?.value || "" }));
+                                                    } else {
+                                                        setSelectedSlot(prev => ({ ...prev, [apt.id]: "" }));
+                                                    }
                                                 }}
                                                 className="flex-1 min-w-[200px] px-2.5 py-1.5 rounded-lg border border-glass glass-panel text-sm text-foreground"
                                             >
@@ -328,15 +349,24 @@ export default function StaffAppointments() {
                                                         className="flex-1 min-w-[200px] px-2.5 py-1.5 rounded-lg border border-glass glass-panel text-sm text-foreground"
                                                     >
                                                         <option value="">Select Time Slot</option>
-                                                        {slots.map((slot) => (
+                                                        {slots.filter(s => !s.taken).map((slot) => (
                                                             <option
                                                                 key={slot.value}
                                                                 value={slot.value}
-                                                                disabled={slot.taken}
                                                             >
-                                                                {slot.label}{slot.taken ? " — ❌ Taken" : " — ✅ Available"}
+                                                                {slot.label} — ✅ Available
                                                             </option>
                                                         ))}
+                                                        {/* Optional: Show taken slots as disabled at the end if needed, but hiding them per "not available" request */}
+                                                        {slots.some(s => s.taken) && (
+                                                            <optgroup label="Taken Slots">
+                                                                {slots.filter(s => s.taken).map(slot => (
+                                                                    <option key={slot.value} value={slot.value} disabled>
+                                                                        {slot.label} — ❌ Already Booked/Selected
+                                                                    </option>
+                                                                ))}
+                                                            </optgroup>
+                                                        )}
                                                     </select>
                                                 )}
                                             </div>
