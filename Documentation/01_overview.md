@@ -21,7 +21,9 @@ Think of it as an internal hospital portal where:
 | 👨‍⚕️ Doctor management | Admin creates doctor accounts; doctors manage their own availability |
 | 🏥 Department system | Admin adds departments from a predefined list with one click |
 | 📋 Prescriptions | Doctors write prescriptions linked to appointments |
-| 🌙 Dark mode | System-wide light/dark toggle |
+| 🌙 Theme System | System-wide light/dark mode with smooth transitions |
+| 📱 Responsive Design | Mobile-first UI that works perfectly across all devices |
+| ✨ Premium UI | Glassmorphism, animated background shaders, and high-fidelity aesthetics |
 | 🔒 Row-level security | Every database query is restricted by Supabase RLS policies |
 
 ---

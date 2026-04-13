@@ -111,11 +111,13 @@ app/
 ```
 components/
 ├── DashboardLayout.tsx     # Wraps every dashboard: sidebar + header + content area
-├── Sidebar.tsx             # Collapsible navigation sidebar (role-based links/colors)
-├── ThemeToggle.tsx         # Light/dark mode toggle button
+├── Sidebar.tsx             # Collapsible, responsive navigation sidebar
+├── ThemeToggle.tsx         # Light/dark mode toggle with persistence
+├── theme-provider.tsx     # Context provider for system-wide theme management
 └── ui/
+    ├── the-infinite-grid.tsx # High-fidelity background shader component
     ├── Card.tsx            # Stat card (label, value, icon, color)
-    ├── Modal.tsx           # Overlay modal dialog with backdrop
+    ├── Modal.tsx           # Responsive overlay modal (bottom-sheet on mobile)
     ├── Skeleton.tsx        # Loading placeholders (CardSkeleton, TableSkeleton)
     ├── StatusBadge.tsx     # Colored pill for appointment status
     └── Table.tsx           # Reusable table with styled header and rows

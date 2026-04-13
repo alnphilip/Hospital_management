@@ -44,9 +44,28 @@ Tailwind is a utility-first CSS framework. Instead of writing custom CSS classes
 - `dark:` prefix for dark mode variants (`dark:bg-slate-900`)
 - `hover:` prefix for hover states
 - `gradient` utilities for the colour gradients
-- Responsive prefixes: `sm:`, `lg:`, `xl:`
+- Responsive prefixes: `sm:`, `md:`, `lg:`, `xl:` to ensure full mobile compatibility
+- Glassmorphic effects using `backdrop-blur` and semi-transparent surfaces
 
 **Version:** `tailwindcss: ^4` (configured via `@tailwindcss/postcss`)
+
+---
+
+## Animation & Visuals — Framer Motion
+
+**What is it?**  
+The industry-standard animation library for React. Used for smooth entrance animations, interactive components, and complex background shaders.
+
+**Key implementations:**
+- **Infinite Grid Shader**: A performant background pattern that responds to mouse movements.
+- **Micro-interactions**: Smooth hover effects and page transitions.
+
+---
+
+## Theme Management — next-themes
+
+**What is it?**  
+A library that handles theme switching (Dark/Light/System) without the "flash" of incorrect theme on page load. It integrates deeply with Next.js SSR to ensure hydration-safe theme application.
 
 ---
 
