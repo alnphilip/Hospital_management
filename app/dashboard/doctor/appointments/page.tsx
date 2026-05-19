@@ -3,9 +3,17 @@
 import { useEffect, useState } from "react";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { TableSkeleton } from "@/components/ui/Skeleton";
-import { CheckCircle, FileText, Plus, Trash2, Loader2, Clock, Users, Building2, Activity } from "lucide-react";
+import { CheckCircle, FileText, Plus, Trash2, Loader2, Clock, Users, Building2, Activity, Eye } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import toast from "react-hot-toast";
+
+interface Prescription {
+    id: string;
+    diagnosis: string;
+    medications: Medication[];
+    instructions: string;
+    created_at: string;
+}
 
 interface Appointment {
     id: string;
@@ -17,6 +25,7 @@ interface Appointment {
     patient_id: string;
     patients?: { id: string; user_id: string; profiles?: { full_name: string } };
     departments?: { name: string };
+    prescription?: Prescription | null;
     [key: string]: unknown;
 }
 
@@ -30,13 +39,17 @@ export default function DoctorAppointments() {
     const [loading, setLoading] = useState(true);
     const [appointments, setAppointments] = useState<Appointment[]>([]);
 
-    // Prescription modal state
-    const [showRxModal, setShowRxModal] = useState(false);
+    // Write prescription modal state
+    const [showWriteModal, setShowWriteModal] = useState(false);
     const [rxAppointment, setRxAppointment] = useState<Appointment | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [diagnosis, setDiagnosis] = useState("");
     const [medications, setMedications] = useState<Medication[]>([{ name: "", dosage: "", frequency: "" }]);
     const [instructions, setInstructions] = useState("");
+
+    // View prescription modal state
+    const [showViewModal, setShowViewModal] = useState(false);
+    const [viewRx, setViewRx] = useState<{ prescription: Prescription; appointment: Appointment } | null>(null);
 
     useEffect(() => { loadData(); }, []);
 
@@ -70,12 +83,19 @@ export default function DoctorAppointments() {
         }
     }
 
-    function openPrescriptionModal(apt: Appointment) {
+    function openWriteModal(apt: Appointment) {
         setRxAppointment(apt);
         setDiagnosis("");
         setMedications([{ name: "", dosage: "", frequency: "" }]);
         setInstructions("");
-        setShowRxModal(true);
+        setShowWriteModal(true);
+    }
+
+    function openViewModal(apt: Appointment) {
+        if (apt.prescription) {
+            setViewRx({ prescription: apt.prescription, appointment: apt });
+            setShowViewModal(true);
+        }
     }
 
     function addMedication() {
@@ -114,7 +134,7 @@ export default function DoctorAppointments() {
             const result = await res.json();
             if (res.ok) {
                 toast.success("Prescription created!");
-                setShowRxModal(false);
+                setShowWriteModal(false);
                 loadData();
             } else {
                 toast.error(result.error || "Failed to create prescription");
@@ -139,7 +159,7 @@ export default function DoctorAppointments() {
             {/* Context/Subtitle */}
             <div>
                 <p className="text-muted text-[15px] font-medium tracking-wide">
-                    View your appointments and write prescriptions.
+                    View your appointments and manage prescriptions.
                 </p>
             </div>
 
@@ -150,65 +170,81 @@ export default function DoctorAppointments() {
                 </div>
             ) : (
                 <div className="flex flex-col gap-4">
-                    {appointments.map((apt) => (
-                        <div key={apt.id} className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between p-5 rounded-2xl bg-white dark:bg-[#0f172a] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-200 dark:border-slate-800/80 transition-all hover:scale-[1.01] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)]">
-                            <div className="flex flex-col gap-1.5 min-w-0">
-                                <div className="flex items-center gap-3">
-                                    <p className="text-base font-semibold text-foreground">{apt.reason || "Consultation"}</p>
-                                </div>
-                                <div className="flex flex-wrap items-center gap-4 text-sm text-muted font-medium mt-1">
-                                    <div className="flex items-center gap-1.5">
-                                        <Clock size={15} className="text-primary opacity-80" />
-                                        <span>
-                                            {apt.appointment_date} {apt.appointment_time && apt.appointment_time !== "00:00:00" ? ` at ${apt.appointment_time}` : ""}
-                                        </span>
+                    {appointments.map((apt) => {
+                        const hasRx = !!apt.prescription;
+                        const canWriteRx = !hasRx && (apt.status === "assigned" || apt.status === "completed");
+
+                        return (
+                            <div key={apt.id} className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between p-5 rounded-2xl bg-white dark:bg-[#0f172a] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-200 dark:border-slate-800/80 transition-all hover:scale-[1.01] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)]">
+                                <div className="flex flex-col gap-1.5 min-w-0">
+                                    <div className="flex items-center gap-3">
+                                        <p className="text-base font-semibold text-foreground">{apt.reason || "Consultation"}</p>
                                     </div>
-                                    {apt.patients?.profiles?.full_name && (
-                                        <div className="flex items-center gap-1.5 text-teal-600 dark:text-teal-400">
-                                            <Users size={14} className="opacity-80" />
-                                            <span className="text-xs font-semibold">Patient: {apt.patients.profiles.full_name}</span>
+                                    <div className="flex flex-wrap items-center gap-4 text-sm text-muted font-medium mt-1">
+                                        <div className="flex items-center gap-1.5">
+                                            <Clock size={15} className="text-primary opacity-80" />
+                                            <span>
+                                                {apt.appointment_date} {apt.appointment_time && apt.appointment_time !== "00:00:00" ? ` at ${apt.appointment_time}` : ""}
+                                            </span>
                                         </div>
-                                    )}
-                                    {apt.departments?.name && (
-                                        <div className="flex items-center gap-1.5 text-muted">
-                                            <Building2 size={13} className="opacity-80" />
-                                            <span className="text-xs font-semibold tracking-wider uppercase">{apt.departments.name}</span>
-                                        </div>
-                                    )}
+                                        {apt.patients?.profiles?.full_name && (
+                                            <div className="flex items-center gap-1.5 text-teal-600 dark:text-teal-400">
+                                                <Users size={14} className="opacity-80" />
+                                                <span className="text-xs font-semibold">Patient: {apt.patients.profiles.full_name}</span>
+                                            </div>
+                                        )}
+                                        {apt.departments?.name && (
+                                            <div className="flex items-center gap-1.5 text-muted">
+                                                <Building2 size={13} className="opacity-80" />
+                                                <span className="text-xs font-semibold tracking-wider uppercase">{apt.departments.name}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3 shrink-0">
+                                    <StatusBadge status={apt.status} />
+                                    <div className="flex items-center gap-2">
+                                        {/* View Prescription — if one exists */}
+                                        {hasRx && (
+                                            <button
+                                                onClick={() => openViewModal(apt)}
+                                                className="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 text-blue-600 bg-blue-50 dark:bg-blue-950/40 dark:text-blue-400 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-950/60 transition shadow-sm border border-blue-200/50 dark:border-blue-800/30"
+                                                title="View Prescription"
+                                            >
+                                                <Eye size={16} /> <span className="hidden sm:inline-block ml-1.5 text-sm font-semibold">View Rx</span>
+                                            </button>
+                                        )}
+                                        {/* Write Prescription — only if no Rx exists and status allows */}
+                                        {canWriteRx && (
+                                            <button
+                                                onClick={() => openWriteModal(apt)}
+                                                className="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 text-violet-600 bg-violet-50 dark:bg-violet-950/40 dark:text-violet-400 rounded-xl hover:bg-violet-100 dark:hover:bg-violet-950/60 transition shadow-sm border border-violet-200/50 dark:border-violet-800/30"
+                                                title="Write Prescription"
+                                            >
+                                                <FileText size={16} /> <span className="hidden sm:inline-block ml-1.5 text-sm font-semibold">Write Rx</span>
+                                            </button>
+                                        )}
+                                        {apt.status === "assigned" && (
+                                            <button
+                                                onClick={() => markComplete(apt.id)}
+                                                className="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/60 transition shadow-sm border border-emerald-200/50 dark:border-emerald-800/30"
+                                                title="Mark as Complete"
+                                            >
+                                                <CheckCircle size={16} /> <span className="hidden sm:inline-block ml-1.5 text-sm font-semibold">Complete</span>
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 shrink-0">
-                                <StatusBadge status={apt.status} />
-                                <div className="flex items-center gap-2">
-                                    {(apt.status === "assigned" || apt.status === "completed") && (
-                                        <button
-                                            onClick={() => openPrescriptionModal(apt)}
-                                            className="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 text-violet-600 bg-violet-50 dark:bg-violet-950/40 dark:text-violet-400 rounded-xl hover:bg-violet-100 dark:hover:bg-violet-950/60 transition shadow-sm border border-violet-200/50 dark:border-violet-800/30"
-                                            title="Prescription"
-                                        >
-                                            <FileText size={16} /> <span className="hidden sm:inline-block ml-1.5 text-sm font-semibold">Prescription</span>
-                                        </button>
-                                    )}
-                                    {apt.status === "assigned" && (
-                                        <button
-                                            onClick={() => markComplete(apt.id)}
-                                            className="flex items-center justify-center w-9 h-9 sm:w-auto sm:h-auto sm:px-3 sm:py-2 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/60 transition shadow-sm border border-emerald-200/50 dark:border-emerald-800/30"
-                                            title="Mark as Complete"
-                                        >
-                                            <CheckCircle size={16} /> <span className="hidden sm:inline-block ml-1.5 text-sm font-semibold">Complete</span>
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
 
-            {/* Prescription Modal */}
+            {/* ===== WRITE PRESCRIPTION MODAL ===== */}
             <Modal
-                isOpen={showRxModal}
-                onClose={() => setShowRxModal(false)}
+                isOpen={showWriteModal}
+                onClose={() => setShowWriteModal(false)}
                 title={`Prescription for ${rxAppointment?.patients?.profiles?.full_name || "Patient"}`}
                 size="lg"
             >
@@ -316,7 +352,7 @@ export default function DoctorAppointments() {
                     <div className="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800/80 mt-auto">
                         <button
                             type="button"
-                            onClick={() => setShowRxModal(false)}
+                            onClick={() => setShowWriteModal(false)}
                             className="flex-1 h-12 rounded-xl text-sm font-semibold text-slate-500 dark:text-slate-400 opacity-70 border border-slate-200 dark:border-slate-800 hover:opacity-100 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
                         >
                             Cancel
@@ -334,6 +370,85 @@ export default function DoctorAppointments() {
                         </button>
                     </div>
                 </form>
+            </Modal>
+
+            {/* ===== VIEW PRESCRIPTION MODAL (read-only) ===== */}
+            <Modal
+                isOpen={showViewModal}
+                onClose={() => setShowViewModal(false)}
+                title={`Prescription — ${viewRx?.appointment?.patients?.profiles?.full_name || "Patient"}`}
+                size="lg"
+            >
+                {viewRx && (
+                    <div className="space-y-6">
+                        {/* Appointment context */}
+                        <div className="w-full flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-800/60">
+                            <div className="flex items-center gap-2 text-[13px] font-medium text-slate-600 dark:text-slate-400">
+                                <Clock size={16} className="text-primary/70 shrink-0" />
+                                <span>{viewRx.appointment.appointment_date} <span className="opacity-30 mx-0.5">|</span> {viewRx.appointment.appointment_time}</span>
+                            </div>
+                            <div className="w-px h-3 bg-slate-300 dark:bg-slate-700 mx-1" />
+                            <div className="flex items-center gap-2 text-[13px] font-medium text-slate-600 dark:text-slate-400">
+                                <Building2 size={16} className="text-secondary/70 shrink-0" />
+                                <span>{viewRx.appointment.reason || "Consultation"}</span>
+                            </div>
+                        </div>
+
+                        {/* Diagnosis */}
+                        <div className="space-y-2">
+                            <label className="text-[12px] font-bold text-muted uppercase tracking-wider ml-1">Diagnosis</label>
+                            <div className="px-4 py-3 rounded-xl bg-violet-50 dark:bg-violet-950/20 border border-violet-200/50 dark:border-violet-800/30 text-sm text-foreground font-medium">
+                                {viewRx.prescription.diagnosis || <span className="italic text-slate-400">No diagnosis recorded</span>}
+                            </div>
+                        </div>
+
+                        {/* Medications */}
+                        <div className="space-y-3">
+                            <label className="text-[12px] font-bold text-muted uppercase tracking-wider ml-1">Medications</label>
+                            {viewRx.prescription.medications && viewRx.prescription.medications.length > 0 ? (
+                                <div className="space-y-2">
+                                    {viewRx.prescription.medications.map((med, i) => (
+                                        <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-teal-50 dark:bg-teal-950/20 border border-teal-200/50 dark:border-teal-800/30">
+                                            <span className="text-lg">💊</span>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-semibold text-foreground">{med.name}</p>
+                                                <p className="text-xs text-muted mt-0.5">
+                                                    {med.dosage && <span>Dosage: {med.dosage}</span>}
+                                                    {med.dosage && med.frequency && <span className="mx-1.5 opacity-30">·</span>}
+                                                    {med.frequency && <span>Frequency: {med.frequency}</span>}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-sm italic text-slate-400 px-1">No medications recorded.</p>
+                            )}
+                        </div>
+
+                        {/* Instructions */}
+                        {viewRx.prescription.instructions && (
+                            <div className="space-y-2">
+                                <label className="text-[12px] font-bold text-muted uppercase tracking-wider ml-1">Instructions</label>
+                                <div className="px-4 py-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-800/30 text-sm text-foreground">
+                                    📝 {viewRx.prescription.instructions}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Written date */}
+                        <p className="text-xs text-slate-400 text-right pt-2">
+                            Written on {new Date(viewRx.prescription.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                        </p>
+
+                        <button
+                            onClick={() => setShowViewModal(false)}
+                            className="w-full h-12 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
+                        >
+                            Close
+                        </button>
+                    </div>
+                )}
             </Modal>
         </div>
     );

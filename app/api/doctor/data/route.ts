@@ -92,9 +92,30 @@ export async function GET(request: NextRequest) {
                 .eq("doctor_id", doctor.id)
                 .order("appointment_date", { ascending: false });
 
+            // Also fetch prescriptions for these appointments so UI knows which have Rx
+            const aptIds = (appointments || []).map((a) => a.id);
+            let prescriptionMap: Record<string, { id: string; diagnosis: string; medications: unknown[]; instructions: string; created_at: string }> = {};
+
+            if (aptIds.length > 0) {
+                const { data: prescriptions } = await adminClient
+                    .from("prescriptions")
+                    .select("id, appointment_id, diagnosis, medications, instructions, created_at")
+                    .eq("doctor_id", doctor.id)
+                    .in("appointment_id", aptIds);
+
+                for (const rx of prescriptions || []) {
+                    prescriptionMap[rx.appointment_id] = rx;
+                }
+            }
+
+            const enriched = (appointments || []).map((apt) => ({
+                ...apt,
+                prescription: prescriptionMap[apt.id] || null,
+            }));
+
             return NextResponse.json({
                 doctorId: doctor.id,
-                appointments: appointments || [],
+                appointments: enriched,
             });
         }
 
